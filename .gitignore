@@ -1,0 +1,43 @@
+# Secrets — NEVER commit
+.credentials.json
+
+# Runtime conversation/session state
+projects/
+history.jsonl
+sessions/
+session-env/
+shell-snapshots/
+todos/
+tasks/
+file-history/
+
+# Managed by plugin system (large, reproducible)
+plugins/
+
+# Caches
+cache/
+paste-cache/
+stats-cache.json
+mcp-needs-auth-cache.json
+
+# Logs / telemetry / stats
+logs/
+debug/
+telemetry/
+usage-data/
+statsig/
+nwave-install.log
+
+# Backups / downloads / IDE state
+backups/
+downloads/
+ide/
+
+# Runtime policy state
+policy-limits.json
+
+# Stray nested dir
+.claude/
+
+# Project-specific notes
+plans/
