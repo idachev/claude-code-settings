@@ -12,7 +12,7 @@ This is a snapshot of `~/.claude` minus runtime state, conversation history, and
 | `RTK.md` | Notes on [RTK (Rust Token Killer)](https://github.com/rtk-ai/rtk) — a CLI proxy that reduces token usage |
 | `settings.json` | Hooks, enabled plugins, marketplaces, status line |
 | `skills/hashtag-researcher/` | Custom skill for researching social-media hashtag popularity (handles Latin + Cyrillic) |
-| `skills/agent-browser`, `skills/find-skills`, `skills/skill-creator` | Symlinks to skills installed elsewhere on my machine — these will be **dangling after clone** |
+| `skills/agent-browser`, `skills/find-skills`, `skills/skill-creator` | Symlinks into `~/.agents/skills/` — installed via the [vercel-labs/skills](https://github.com/vercel-labs/skills) CLI (see [Replicating the `~/.agents` skills](#replicating-the-agents-skills) below). **Dangling after clone** until you install them. |
 
 ## Heads-up before copying my `settings.json`
 
@@ -30,6 +30,29 @@ A few settings here suit my workflow but may not suit yours:
 
   Remove or replace these before using the config, or Claude Code will fail when the hooks fire.
 - The `enabledPlugins` list reflects my marketplaces (including private ones like `sc-marketplace`). You'll want to prune to what you actually have access to.
+
+## Replicating the `~/.agents` skills
+
+The three symlinks under `skills/` (`agent-browser`, `find-skills`, `skill-creator`) point at `~/.agents/skills/<name>/`. That directory is managed by the [`skills` CLI](https://github.com/vercel-labs/skills) from Vercel Labs — a multi-agent skills installer that shares a single skill set across Claude Code, Codex, Cursor, OpenCode, and others.
+
+To replicate my install:
+
+```bash
+# Installs the agent-browser SKILL + bundled skill-creator
+npx skills add vercel-labs/agent-browser
+
+# Installs find-skills (lives in the vercel-labs/skills repo)
+npx skills add vercel-labs/skills
+```
+
+The CLI writes everything to `~/.agents/skills/<name>/` and tracks versions in `~/.agents/.skill-lock.json`. After install, the symlinks in this repo will resolve correctly.
+
+To verify what got installed:
+
+```bash
+cat ~/.agents/.skill-lock.json
+ls ~/.agents/skills/
+```
 
 ## What's deliberately gitignored
 
