@@ -9,7 +9,7 @@ This is a snapshot of `~/.claude` minus runtime state, conversation history, and
 | File / Dir | Purpose |
 |---|---|
 | `CLAUDE.md` | Global instructions injected into every Claude Code session (shell-alias bypass rules, build-log conventions, etc.) |
-| `RTK.md` | Notes on [RTK (Rust Token Killer)](https://github.com/) — a CLI proxy that reduces token usage |
+| `RTK.md` | Notes on [RTK (Rust Token Killer)](https://github.com/rtk-ai/rtk) — a CLI proxy that reduces token usage |
 | `settings.json` | Hooks, enabled plugins, marketplaces, status line |
 | `skills/hashtag-researcher/` | Custom skill for researching social-media hashtag popularity (handles Latin + Cyrillic) |
 | `skills/agent-browser`, `skills/find-skills`, `skills/skill-creator` | Symlinks to skills installed elsewhere on my machine — these will be **dangling after clone** |
@@ -23,8 +23,10 @@ A few settings here suit my workflow but may not suit yours:
   - `~/bin/claude-input-notify.sh`
   - `~/bin/claude-bash-safety.sh`
   - `~/bin/claude-statusline.sh`
+
+  These `~/bin/...` scripts live in my [own-debian-configs](https://github.com/idachev/own-debian-configs) repo.
   - `bd prime` (from the [beads](https://github.com/steveyegge/beads) plugin)
-  - `rtk hook claude` (from RTK)
+  - `rtk hook claude` (from [RTK](https://github.com/rtk-ai/rtk))
 
   Remove or replace these before using the config, or Claude Code will fail when the hooks fire.
 - The `enabledPlugins` list reflects my marketplaces (including private ones like `sc-marketplace`). You'll want to prune to what you actually have access to.
