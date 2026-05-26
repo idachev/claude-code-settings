@@ -1,6 +1,73 @@
 {
+  "cleanupPeriodDays": 365,
   "env": {
     "ENABLE_TOOL_SEARCH": "true"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(./build-dev.sh:*)",
+      "Bash(./build-project.sh:*)",
+      "Bash(./mvnw:*)",
+      "Bash(bd:*)",
+      "Bash(cat:*)",
+      "Bash(command cat:*)",
+      "Bash(command find:*)",
+      "Bash(command grep:*)",
+      "Bash(command head:*)",
+      "Bash(command ls:*)",
+      "Bash(command tail:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(gh api:*)",
+      "Bash(gh pr:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git grep:*)",
+      "Bash(git help:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(git subtree:*)",
+      "Bash(GITHUB_TOKEN= gh api:*)",
+      "Bash(GITHUB_TOKEN= gh pr:*)",
+      "Bash(grep:*)",
+      "Bash(jar tf:*)",
+      "Bash(ls:*)",
+      "Bash(mvn test:*)",
+      "Bash(rg:*)",
+      "Bash(test:*)",
+      "Bash(xargs:*)",
+      "mcp__atlassian__atlassianUserInfo",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "mcp__atlassian__getConfluencePage",
+      "mcp__atlassian__getJiraIssue",
+      "mcp__atlassian__searchConfluenceUsingCql",
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__javadc__decompile-from-jar",
+      "mcp__javadc__decompile-from-package",
+      "mcp__postgres__query",
+      "WebFetch(domain:developer.superdispatch.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.orderful.com)",
+      "WebFetch(domain:docs.quarkiverse.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:java.testcontainers.org)",
+      "WebFetch(domain:mapstruct.org)",
+      "WebFetch(domain:mvnrepository.com)",
+      "WebFetch(domain:quarkus.io)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Skill(beads:beads)",
+      "Skill(code-review:code-review)",
+      "WebSearch",
+      "Bash(command mvn:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "default"
   },
   "hooks": {
     "Notification": [
@@ -87,7 +154,8 @@
     "typescript-lsp@claude-plugins-official": false,
     "beads@beads-marketplace": true,
     "codex@openai-codex": true,
-    "last30days@last30days-skill": true
+    "last30days@last30days-skill": true,
+    "warp@claude-code-warp": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -107,13 +175,20 @@
         "source": "github",
         "repo": "mvanhorn/last30days-skill"
       }
+    },
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "advisorModel": "opus",
   "autoUpdatesChannel": "latest",
-  "cleanupPeriodDays": 365,
   "skipDangerousModePermissionPrompt": true,
+  "autoCompactEnabled": false,
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1753936274653
