@@ -80,28 +80,6 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bd prime"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bd prime"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -155,7 +133,7 @@
     "beads@beads-marketplace": true,
     "codex@openai-codex": true,
     "last30days@last30days-skill": true,
-    "warp@claude-code-warp": true
+    "prepush-review@sc-marketplace": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -175,17 +153,10 @@
         "source": "github",
         "repo": "mvanhorn/last30days-skill"
       }
-    },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
     }
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "advisorModel": "opus",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
   "autoCompactEnabled": false,

@@ -1,0 +1,18 @@
+Map Title
+
+- Branch 1
+    * Sub-topic
+        - Detail
+        - Detail
+    * Sub-topic
+- Branch 2 [1]
+    * Sub-topic
+    * Sub-topic
+- Branch 3 [^1](leads to)
+    * Sub-topic
+- Group [S1]
+    * Item A [B1]
+    * Item B [B1]
+    [B1]: Boundary label
+[S1]: Summary node
+    - Key takeaway

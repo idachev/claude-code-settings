@@ -36,6 +36,20 @@ ide/
 # Runtime policy state
 policy-limits.json
 
+# Updater / cleanup / daemon / jobs runtime state
+.last-cleanup
+.last-update-result.json
+daemon.log
+daemon/
+jobs/
+
+# Security guidance plugin state (old root location + new security/ dir, incl. its venv)
+security_warnings_state_*.json
+security/
+
+# Pre-push review tooling — installed/managed externally
+prepush-review/
+
 # Stray nested dir
 .claude/
 
