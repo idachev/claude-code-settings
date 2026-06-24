@@ -108,32 +108,26 @@
   },
   "enabledPlugins": {
     "atlassian-tools@sc-marketplace": true,
-    "atlassian@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
-    "ddd-workflow@sc-marketplace": true,
     "feature-dev@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "git-commit@sc-marketplace": true,
     "github@claude-plugins-official": true,
     "java-stack@sc-marketplace": true,
-    "jdtls-lsp@claude-plugins-official": false,
     "ms-amplifier@sc-marketplace": true,
-    "playwright@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": false,
     "sc-sdlc@sc-marketplace": true,
-    "security-guidance@claude-code-plugins": false,
+    "security-guidance@claude-code-plugins": true,
     "security-guidance@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": false,
     "beads@beads-marketplace": true,
     "codex@openai-codex": true,
-    "last30days@last30days-skill": true,
-    "prepush-review@sc-marketplace": true
+    "playwright@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -163,5 +157,6 @@
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1753936274653
-  }
+  },
+  "tui": "fullscreen"
 }
