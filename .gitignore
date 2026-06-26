@@ -57,3 +57,5 @@ prepush-review/
 plans/
 
 .serena
+
+image-cache/

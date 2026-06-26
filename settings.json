@@ -69,6 +69,7 @@
     "ask": [],
     "defaultMode": "default"
   },
+  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -88,15 +89,6 @@
             "type": "command",
             "command": "~/bin/claude-bash-safety.sh",
             "timeout": 20
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "rtk hook claude"
           }
         ]
       }
@@ -152,11 +144,11 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "autoCompactEnabled": false,
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1753936274653
-  },
-  "tui": "fullscreen"
+  }
 }

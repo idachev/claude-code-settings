@@ -45,5 +45,3 @@ Use POSIX-compliant syntax for `tail` and `head`:
 6. Report the log file path to the user so they can inspect it too.
 
 This applies to every project, not just one. Treat `./tmp/claude-logs/*.log` as the canonical record of Claude's build runs, sorted chronologically by filename.
-
-@RTK.md
