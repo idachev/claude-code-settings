@@ -69,7 +69,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "opus",
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "Notification": [
       {
@@ -89,6 +89,15 @@
             "type": "command",
             "command": "~/bin/claude-bash-safety.sh",
             "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
           }
         ]
       }
@@ -119,7 +128,9 @@
     "pyright-lsp@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "xmind-builder@xmind-skills": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -138,6 +149,18 @@
       "source": {
         "source": "github",
         "repo": "mvanhorn/last30days-skill"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    },
+    "xmind-skills": {
+      "source": {
+        "source": "github",
+        "repo": "idachev/xmind-skills"
       }
     }
   },
