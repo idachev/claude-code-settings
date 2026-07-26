@@ -69,7 +69,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "hooks": {
     "Notification": [
       {
@@ -122,7 +122,7 @@
     "security-guidance@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "beads@beads-marketplace": true,
+    "beads@beads-marketplace": false,
     "codex@openai-codex": true,
     "playwright@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
@@ -130,7 +130,8 @@
     "code-simplifier@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "ui-ux-pro-max@ui-ux-pro-max-skill": true,
-    "xmind-builder@xmind-skills": true
+    "xmind-builder@xmind-skills": true,
+    "pdf2epub@pdf2epub-skills": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -162,10 +163,17 @@
         "source": "github",
         "repo": "idachev/xmind-skills"
       }
+    },
+    "pdf2epub-skills": {
+      "source": {
+        "source": "github",
+        "repo": "idachev/pdf2epub-skills"
+      },
+      "autoUpdate": true
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,

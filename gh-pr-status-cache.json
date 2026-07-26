@@ -1,0 +1,1 @@
+{"https://github.com/ship-cars-usa/integration-executor/pull/263":{"number":263,"title":"LITE-7632 Fix EDI 214 pickup-ETA status code AG -> E1 for Rivian","state":"MERGED","checks":{"passed":9,"failed":0,"pending":0},"review":"REVIEW_REQUIRED","additions":2,"deletions":2}}

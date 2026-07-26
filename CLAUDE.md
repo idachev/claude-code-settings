@@ -46,4 +46,15 @@ Use POSIX-compliant syntax for `tail` and `head`:
 
 This applies to every project, not just one. Treat `./tmp/claude-logs/*.log` as the canonical record of Claude's build runs, sorted chronologically by filename.
 
+## Validate With The Repo's Full-Build Script Before Pushing
+
+Before pushing or opening a PR in a backend repo, check for a full-build script in the repo root and run it at least once, even if module-level `mvn`/`./gradlew` tests already passed:
+
+- **Spring Boot backends**: `./build-project.sh` (e.g. `inventory-backend`)
+- **Quarkus backends**: `./build-dev.sh`
+
+**Why:** A change can pass in an isolated module's test run while breaking a downstream module — e.g. a validation check moved earlier in a call chain can preempt a more specific check elsewhere and flip its error code, only visible once the full reactor (or a downstream module like `api-services`) runs. These scripts also build the project's Docker image(s), catching packaging issues a plain test run wouldn't. Log to a timestamped file per the rule above; don't pipe straight to `tail`.
+
+**How to apply**: at the start of a session in a repo, check whether `build-project.sh` or `build-dev.sh` exists in the repo root. If one does, run it before any push/PR — not just the module(s) you touched.
+
 @RTK.md
