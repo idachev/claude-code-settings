@@ -67,9 +67,9 @@
     ],
     "deny": [],
     "ask": [],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "Notification": [
       {
@@ -112,24 +112,24 @@
     "claude-md-management@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
     "feature-dev@claude-plugins-official": true,
     "github@claude-plugins-official": true,
     "java-stack@sc-marketplace": true,
     "ms-amplifier@sc-marketplace": true,
     "sc-sdlc@sc-marketplace": true,
     "security-guidance@claude-code-plugins": true,
-    "security-guidance@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "beads@beads-marketplace": false,
     "codex@openai-codex": true,
     "playwright@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "frontend-design@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": false,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "xmind-builder@xmind-skills": true,
     "pdf2epub@pdf2epub-skills": true
   },
@@ -177,9 +177,13 @@
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "autoCompactEnabled": false,
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1753936274653
+  },
+  "skillOverrides": {
+    "image-mockup": "off"
   }
 }
