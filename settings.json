@@ -36,7 +36,6 @@
       "Bash(mvn test:*)",
       "Bash(rg:*)",
       "Bash(test:*)",
-      "Bash(xargs:*)",
       "mcp__atlassian__atlassianUserInfo",
       "mcp__atlassian__getAccessibleAtlassianResources",
       "mcp__atlassian__getConfluencePage",
@@ -67,7 +66,10 @@
     "ask": [],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
+  "skillOverrides": {
+    "image-mockup": "off"
+  },
   "hooks": {
     "Notification": [
       {
@@ -119,7 +121,8 @@
     "typescript-lsp@claude-plugins-official": false,
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "xmind-builder@xmind-skills": true,
-    "pdf2epub@pdf2epub-skills": true
+    "pdf2epub@pdf2epub-skills": true,
+    "serena@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -161,7 +164,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
@@ -170,8 +173,5 @@
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1753936274653
-  },
-  "skillOverrides": {
-    "image-mockup": "off"
   }
 }

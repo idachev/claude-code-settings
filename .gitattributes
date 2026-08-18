@@ -1,0 +1,5 @@
+# Strip runtime/company-derived keys before they reach the index (this repo is public).
+# Filters are defined locally in .git/config — see scripts/git-clean-json.py.
+# A clone without those filter definitions simply gets the content unchanged.
+settings.json   filter=strip-settings
+.claude.json    filter=strip-claude-json
