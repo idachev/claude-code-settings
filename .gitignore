@@ -63,3 +63,4 @@ image-cache/
 # Derived state / backups that can capture per-project data
 gh-pr-status-cache.json
 settings.json.bak*
+.claude.json.bak*
