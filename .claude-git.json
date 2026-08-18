@@ -1,13 +1,16 @@
 {
   "mcpServers": {
     "headroom": {
+      "type": "stdio",
       "command": "headroom",
       "args": [
         "mcp",
         "serve"
-      ]
+      ],
+      "env": {}
     },
     "serena": {
+      "type": "stdio",
       "command": "uvx",
       "args": [
         "--from",
@@ -19,7 +22,8 @@
         "claude-code",
         "--open-web-dashboard",
         "False"
-      ]
+      ],
+      "env": {}
     }
   }
 }

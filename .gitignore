@@ -64,3 +64,7 @@ image-cache/
 gh-pr-status-cache.json
 settings.json.bak*
 .claude.json.bak*
+
+# Live Claude Code state: OAuth session, identifiers, every local project.
+# The versionable slice is snapshotted to .claude-git.json by a pre-commit hook.
+.claude.json
