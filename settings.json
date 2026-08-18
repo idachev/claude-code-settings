@@ -121,8 +121,7 @@
     "typescript-lsp@claude-plugins-official": false,
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "xmind-builder@xmind-skills": true,
-    "pdf2epub@pdf2epub-skills": true,
-    "serena@claude-plugins-official": true
+    "pdf2epub@pdf2epub-skills": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
