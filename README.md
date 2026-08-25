@@ -104,6 +104,42 @@ cat ~/skills-lock.json
 ls ~/.agents/skills/
 ```
 
+### `agent-browser` also needs its CLI
+
+The skill is only a discovery stub: it shells out to an `agent-browser` binary that the
+skills CLI does not install. Add it, then let it fetch its own Chrome:
+
+```bash
+npm i -g agent-browser && agent-browser install
+```
+
+`npm` warns that the package's `postinstall` script was blocked by the `allow-scripts`
+policy. Ignore it — the binary ships prebuilt in the package, and `agent-browser install`
+is what downloads Chrome (into `~/.agent-browser/browsers/`). Reinstalling with
+`--allow-scripts` achieves nothing.
+
+**The nvm trap.** A global npm install lands in the *active* Node version's bin
+directory, and with nvm lazy-loaded — the oh-my-zsh `nvm` plugin makes `node` a shell
+function — that directory joins `PATH` only after something first calls `node` or `npm`.
+An interactive shell that has already run Node finds `agent-browser` and everything looks
+fine, but Claude Code starts each Bash call in a fresh shell, where the very same command
+fails with `command not found`. Link the binary into a directory that is on `PATH`
+unconditionally:
+
+```bash
+mkdir -p ~/.local/bin
+ln -sf "$(npm prefix -g)/bin/agent-browser" ~/.local/bin/agent-browser
+```
+
+Confirm it resolves without warming Node up first:
+
+```bash
+zsh -lc 'command -v agent-browser && agent-browser --version'
+```
+
+The link points into one specific Node version, so re-run it after an nvm upgrade that
+retires that version.
+
 ## How the git plumbing works
 
 Claude Code rewrites its own configuration while it runs, and some of what it writes
