@@ -22,6 +22,15 @@ the directory out from under a running session.
 filters and hooks this repo depends on, so they have to be installed once per clone.
 See [How the git plumbing works](#how-the-git-plumbing-works).
 
+This applies to *every* working copy, not just the one at `~/.claude`. A second checkout
+kept elsewhere for editing is the dangerous case: without the clean filter it commits
+`settings.json` verbatim, `autoMode` inventory and all. Such a checkout also cannot find
+the live config on its own, so point the installer at it explicitly:
+
+```bash
+scripts/install-hooks.sh ~/.claude.json
+```
+
 Then, in rough order of importance:
 
 1. **Prune `settings.json`** — the hooks, plugins, and permission settings are mine;
@@ -83,12 +92,15 @@ Run it from your **home directory**, not from inside `~/.claude`. The CLI treats
 current directory as the project root, so running it here would create a nested
 `~/.claude/.agents/` that the symlink does not point at.
 
-The CLI writes everything to `~/.agents/skills/<name>/` and tracks versions in `~/.agents/.skill-lock.json`. After install, the symlink in this repo will resolve correctly.
+The CLI writes the skill itself to `~/.agents/skills/<name>/` — a shared location every
+agent reads — but the version lock lands in the directory you invoked it from, so running
+it from home gives you `~/skills-lock.json`. After install, the symlink in this repo
+resolves correctly.
 
 To verify what got installed:
 
 ```bash
-cat ~/.agents/.skill-lock.json
+cat ~/skills-lock.json
 ls ~/.agents/skills/
 ```
 

@@ -53,6 +53,12 @@ prepush-review/
 # Stray nested dir
 .claude/
 
+# Shared agent skills + their version lock. The `skills` CLI writes these into
+# whatever directory it is run from, so running it here instead of from $HOME
+# drops a nested copy the symlinks do not point at -- never commit one.
+.agents/
+skills-lock.json
+
 # Project-specific notes
 plans/
 
