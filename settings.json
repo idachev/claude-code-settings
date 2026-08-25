@@ -85,7 +85,6 @@
     "java-stack@sc-marketplace": false,
     "ms-amplifier@sc-marketplace": false,
     "sc-sdlc@sc-marketplace": false,
-    "security-guidance@claude-code-plugins": false,
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
@@ -102,12 +101,6 @@
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "last30days-skill": {
-      "source": {
-        "source": "github",
-        "repo": "mvanhorn/last30days-skill"
       }
     },
     "ui-ux-pro-max-skill": {
