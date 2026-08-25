@@ -36,20 +36,9 @@
       "Bash(mvn test:*)",
       "Bash(rg:*)",
       "Bash(test:*)",
-      "mcp__atlassian__atlassianUserInfo",
-      "mcp__atlassian__getAccessibleAtlassianResources",
-      "mcp__atlassian__getConfluencePage",
-      "mcp__atlassian__getJiraIssue",
-      "mcp__atlassian__searchConfluenceUsingCql",
-      "mcp__atlassian__searchJiraIssuesUsingJql",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "mcp__javadc__decompile-from-jar",
-      "mcp__javadc__decompile-from-package",
-      "mcp__postgres__query",
-      "WebFetch(domain:developer.superdispatch.com)",
       "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:docs.orderful.com)",
       "WebFetch(domain:docs.quarkiverse.io)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:java.testcontainers.org)",
@@ -57,7 +46,6 @@
       "WebFetch(domain:mvnrepository.com)",
       "WebFetch(domain:quarkus.io)",
       "WebFetch(domain:stackoverflow.com)",
-      "Skill(beads:beads)",
       "Skill(code-review:code-review)",
       "WebSearch",
       "Bash(command mvn:*)"
@@ -80,17 +68,6 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "rtk hook claude"
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
@@ -98,38 +75,29 @@
     "command": "~/bin/claude-statusline.sh"
   },
   "enabledPlugins": {
-    "atlassian-tools@sc-marketplace": true,
+    "atlassian-tools@sc-marketplace": false,
     "claude-md-management@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": false,
+    "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "github@claude-plugins-official": true,
-    "java-stack@sc-marketplace": true,
-    "ms-amplifier@sc-marketplace": true,
-    "sc-sdlc@sc-marketplace": true,
-    "security-guidance@claude-code-plugins": true,
+    "java-stack@sc-marketplace": false,
+    "ms-amplifier@sc-marketplace": false,
+    "sc-sdlc@sc-marketplace": false,
+    "security-guidance@claude-code-plugins": false,
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "beads@beads-marketplace": false,
-    "codex@openai-codex": true,
+    "codex@openai-codex": false,
     "playwright@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
     "code-simplifier@claude-plugins-official": false,
-    "typescript-lsp@claude-plugins-official": false,
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
-    "xmind-builder@xmind-skills": true,
-    "pdf2epub@pdf2epub-skills": true
+    "xmind-builder@xmind-skills": false,
+    "pdf2epub@pdf2epub-skills": false
   },
   "extraKnownMarketplaces": {
-    "beads-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "steveyegge/beads"
-      }
-    },
     "openai-codex": {
       "source": {
         "source": "github",
@@ -175,7 +143,5 @@
   "skipWorkflowUsageWarning": true,
   "autoCompactEnabled": false,
   "skipAutoPermissionPrompt": true,
-  "feedbackSurveyState": {
-    "lastShownTime": 1753936274653
-  }
+  "theme": "dark"
 }
