@@ -130,6 +130,7 @@
       "effortLevel": "high"
     }
   },
+  "outputStyle": "simple",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
