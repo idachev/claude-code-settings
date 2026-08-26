@@ -166,6 +166,7 @@
       "effortLevel": "high"
     }
   },
+  "outputStyle": "simple",
   "permissions": {
     "allow": [
       "Bash(./build-dev.sh:*)",
