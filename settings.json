@@ -58,18 +58,6 @@
   "skillOverrides": {
     "image-mockup": "off"
   },
-  "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/bin/claude-input-notify.sh"
-          }
-        ]
-      }
-    ]
-  },
   "statusLine": {
     "type": "command",
     "command": "~/bin/claude-statusline.sh"
