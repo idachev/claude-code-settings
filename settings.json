@@ -134,7 +134,7 @@
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
+  "theme": "dark",
   "autoCompactEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "theme": "dark"
+  "skipAutoPermissionPrompt": true
 }
