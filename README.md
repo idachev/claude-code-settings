@@ -85,10 +85,15 @@ A few settings here suit my workflow but may not suit yours:
 
   Remove or replace these before using the config, or Claude Code will fail when the hooks fire.
 - The `enabledPlugins` list reflects my marketplaces, including a private one
-  (`sc-marketplace`). Its four plugins are kept as entries but set to `false`, so a
-  clone without access to that marketplace ignores them rather than failing. Everything
-  I keep dormant — the frontend/design plugins, `codex`, `xmind-builder`, `pdf2epub`,
-  `ui-ux-pro-max` — is listed the same way: present, `false`, one flip away from on.
+  (`sc-marketplace`, which offers 24 plugins; four of them appear here). A plugin I want
+  dormant but visible is listed as `false` rather than dropped — `codex`, `xmind-builder`,
+  `pdf2epub`, `ui-ux-pro-max`, the frontend/design ones — so a clone without access to a
+  marketplace ignores them instead of failing, and each is one flip away from on.
+
+  Being absent from the list is not the same as being listed `false`, even though both end
+  up off: an installed plugin that appears nowhere in `enabledPlugins` stays inactive, but
+  silently. Several are installed on this machine that way (the `fe-*` set, `beads`,
+  `typescript-lsp`). If you want to know why a plugin is off, list it explicitly.
 
 ## Replicating the `~/.agents` skills
 

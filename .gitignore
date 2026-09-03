@@ -51,7 +51,10 @@ security/
 # Pre-push review tooling — installed/managed externally
 prepush-review/
 
-# Stray nested dir
+# Project-local settings for the config directory itself. Not stray: when a
+# session runs with ~/.claude as its working directory, Claude Code reads
+# ~/.claude/.claude/settings.local.json as that project's local settings.
+# Machine-local by design, so it stays out of git.
 .claude/
 
 # Shared agent skills + their version lock. The `skills` CLI writes these into
