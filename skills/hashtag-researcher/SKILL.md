@@ -1,11 +1,18 @@
 ---
 name: hashtag-researcher
-description: Research and rank social media hashtag popularity for Instagram, TikTok, and YouTube. Use when the user asks to find hashtags, rank hashtags by popularity, search for best tags for a video/post, or needs hashtag post counts. Handles both Latin and Cyrillic (Bulgarian, Russian, etc.) hashtags. Encodes which analytics websites work via WebFetch and which fail, plus estimation strategies for niche-language tags.
+description: Use when the user asks to find hashtags for a social media post or video, to rank hashtags by popularity, to pick the best tags for a reel, or needs Instagram, TikTok or YouTube post counts for specific tags. Covers Latin and Cyrillic tags, including Bulgarian and Russian ones that most analytics sites do not index.
 ---
 
 # Hashtag Researcher
 
 Research, rank, and select the most popular hashtags for social media content.
+
+## When not to use
+
+- The user wants caption or copy writing, not tag selection.
+- The user wants live engagement analytics for their own account. This skill reads public
+  aggregate post counts only; it has no account access.
+- The user names one platform's paid analytics product. Use that product, not these sources.
 
 ## Workflow
 
@@ -42,9 +49,17 @@ For hashtags where no source returns data (common for small-language Cyrillic ta
 3. Select the top N tags (user-specified, default 7).
 4. Consider mixing popularity tiers: a few high-volume tags for reach + a few niche tags for discoverability.
 
-### Step 5: Update Metadata
+### Step 5: Write the Tags Back (only when a target file is named)
 
-Write the selected tags into the user's metadata JSON file, ordered by popularity (most popular first).
+Skip this step unless the user names a file to update. Never guess a path and never create a
+metadata file on your own — the ranked table from Step 4 is the deliverable by default.
+
+When the user does name a JSON file, read it first, then write the selected tags into the field
+that already holds them, ordered by popularity (most popular first). Keep the existing key name,
+the existing value shape (array of strings, with or without a leading `#`), and the rest of the
+file untouched.
+
+If the file has no such field, ask which key to use instead of inventing one.
 
 ## Output Format
 

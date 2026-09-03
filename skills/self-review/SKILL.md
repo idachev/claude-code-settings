@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: Self review of the current branch against its base, then a one-at-a-time revalidate-and-fix loop over every finding. Use when the user asks for a self review, "ревю на промените", "провери дали сме покрили всичко", or wants review findings revalidated before they are fixed. Runs the multi-agent diff review, checks ticket coverage, revalidates each finding against the real code, fixes only what holds, and reports the rest with evidence. Never commits.
+description: Use when the user asks for a self review of the current branch, says "ревю на промените" or "провери дали сме покрили всичко", wants review findings revalidated against the real code before anything is fixed, or is about to hand a branch over and wants it checked first.
 ---
 
 # Self Review
@@ -8,15 +8,31 @@ description: Self review of the current branch against its base, then a one-at-a
 Review the current branch, then work through the findings one at a time. A finding is fixed only
 after it is revalidated against the real code. Nothing is committed.
 
+## When not to use
+
+- The user wants the review alone, with no fixes. Run the diff review skill directly:
+  `/sc-sdlc:be-review-diff` or `/sc-sdlc:fe-review-diff`.
+- The user wants the branch checked against a written plan and reported, not fixed. Use
+  `sc-sdlc:verify-impl`, or `verify-impl-kb` when the internal knowledge bases matter.
+- The branch has no commits yet, so there is no diff against the base.
+- The user asks for a commit, a push or a PR. This skill never does those.
+
 ## Step 1 — Review
 
-- Run `/sc-sdlc:be-review-diff` for a Java backend repo, or the matching diff review skill for
-  the repo type. Base branch is `master` unless the user names another.
+- Run the diff review skill for the repo type: `/sc-sdlc:be-review-diff` for a Java backend,
+  `/sc-sdlc:fe-review-diff` for a frontend repo. Base branch is `master` unless the user names
+  another.
 - Consolidate all agent findings into one numbered list. Deduplicate. For each entry keep:
   `file:line`, the claim, the severity, the proposed fix.
-- Load the Jira ticket named in the branch (`mcp__atlassian__getJiraIssue`). List its
-  requirements so coverage can be checked against them. Add a finding for each requirement the
-  diff does not cover.
+- Check ticket coverage when the branch name carries a ticket key. List the ticket's requirements,
+  then add a finding for each requirement the diff does not cover.
+  - Read the ticket with `mcp__atlassian__getJiraIssue` **only if that tool is present**. The
+    Atlassian MCP server comes from a plugin that is disabled in this setup, so in a normal
+    session the tool does not exist.
+  - When it is missing, do not stop and do not guess the requirements. Ask the user to paste the
+    ticket, or fall back to the design doc under `docs/plans/`.
+  - Name the source you used in the report. When coverage could not be checked at all, say that
+    plainly instead of leaving it implied.
 - Check the repo's last full build log under `./tmp/claude-logs/` to know whether HEAD is green.
 - Do not fix anything in this step. Present the list to the user only if they asked for the review
   alone; otherwise continue.
@@ -52,8 +68,12 @@ Repeat for every finding, in list order. Never batch several unvalidated finding
 
 ## Step 3 — Close
 
-- Run the repo full build once: `./build-dev.sh` (Quarkus) or `./build-project.sh` (Spring), with
-  the output in `./tmp/claude-logs/build-dev-<timestamp>.log`. Report the test count and result.
+- Run the repo's own full-build script once, so packaging and downstream modules are covered too:
+  `./build-dev.sh` (Quarkus), `./build-project.sh` (Spring). For a frontend repo run the build and
+  test scripts the repo declares in `package.json`. Log the output to
+  `./tmp/claude-logs/build-<timestamp>.log` and report the test count and result.
+- When the repo has no full-build script, run the test suite instead and say in the report that no
+  full build exists. Never report a green build you did not run.
 - Report a table: `# | finding | verdict | action taken | evidence`.
 - List the DECISION items as questions for the user.
 - Do not commit or push. The user asks for that separately.

@@ -38,6 +38,8 @@
       "Bash(test:*)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
+      "WebFetch(domain:best-hashtags.com)",
+      "WebFetch(domain:displaypurposes.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:docs.quarkiverse.io)",
       "WebFetch(domain:github.com)",
@@ -45,6 +47,7 @@
       "WebFetch(domain:mapstruct.org)",
       "WebFetch(domain:mvnrepository.com)",
       "WebFetch(domain:quarkus.io)",
+      "WebFetch(domain:ritetag.com)",
       "WebFetch(domain:stackoverflow.com)",
       "Skill(code-review:code-review)",
       "WebSearch",
@@ -56,6 +59,7 @@
   },
   "model": "opus[1m]",
   "skillOverrides": {
+    "hashtag-researcher": "off",
     "image-mockup": "off"
   },
   "hooks": {
