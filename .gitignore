@@ -74,3 +74,8 @@ settings.json.bak*
 # Live Claude Code state: OAuth session, identifiers, every local project.
 # The versionable slice is snapshotted to .claude-git.json by a pre-commit hook.
 .claude.json
+
+# Claude Code runtime state: Chrome native host wrapper, feedback drafts, uploaded images
+chrome/
+feedback/
+uploads/

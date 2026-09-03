@@ -56,3 +56,47 @@ Before pushing or opening a PR in a backend repo, check for a full-build script 
 **Why:** A change can pass in an isolated module's test run while breaking a downstream module — e.g. a validation check moved earlier in a call chain can preempt a more specific check elsewhere and flip its error code, only visible once the full reactor (or a downstream module like `api-services`) runs. These scripts also build the project's Docker image(s), catching packaging issues a plain test run wouldn't. Log to a timestamped file per the rule above; don't pipe straight to `tail`.
 
 **How to apply**: at the start of a session in a repo, check whether `build-project.sh` or `build-dev.sh` exists in the repo root. If one does, run it before any push/PR — not just the module(s) you touched.
+
+## Self-Review At The End Of Every Code Task
+
+When you finish any code task, run a self-review before reporting completion. Do not wait to be asked.
+
+**Order matters — revalidate before you fix:**
+
+1. Review the code you just wrote or changed and collect findings.
+2. Take each finding one at a time and **revalidate it against the actual source** before touching anything.
+3. If the finding is confirmed, fix it.
+4. If the finding does not hold up, **do not fix it**. Report that you checked it and it was not a real problem, then move to the next finding.
+
+**Why:** review passes — especially ones run by subagents — produce plausible-sounding findings that are wrong. Fixing an unconfirmed finding changes working code for no reason and can introduce real bugs. A finding earns a fix only after it survives a second look at the source.
+
+Report the outcome of every finding, both the ones you fixed and the ones you rejected, so the review's actual coverage is visible and not just the diff.
+
+## Do Not Create GitHub Repos Without Explicit Permission
+
+Do not run `gh repo create` (or any `gh` command that creates a
+repository) unless the user explicitly asked to create a GitHub repo.
+
+"commit and push" is not permission to create a repo. If `origin` is
+missing, commit locally and stop. Say there is no remote. Wait.
+
+Do not pick a GitHub account from the current `gh auth` default. Personal
+repos go to `idachev` (`git@github-idachev:idachev/...`), not
+`ivan-mentorano`, unless the user named that org.
+
+
+## Plans And Specs Live In `docs/plans/`, Finished Ones In `docs/plans/done/`
+
+Superpowers brainstorming specs and writing-plans plans go to `docs/plans/`
+in the repo, not to `docs/superpowers/specs/` or `docs/superpowers/plans/`.
+This overrides the default paths in the superpowers skills. Keep the skills'
+file naming: `YYYY-MM-DD-<topic>-design.md` for a spec,
+`YYYY-MM-DD-<feature>.md` for a plan.
+
+When a plan is implemented and merged, move its plan and spec to
+`docs/plans/done/` with `git mv`, and fix any relative links between them.
+`docs/plans/` then holds only work that is still open, so a glance at the
+directory shows what is in flight.
+
+Do not move a plan to `done/` on your own judgment. Ivan says when it is
+done, or the plan's own steps are all verified complete.
