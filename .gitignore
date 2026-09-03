@@ -84,3 +84,8 @@ settings.json.bak*
 # in the settings merge, so it can carry org-pushed hosts, proxies and tool
 # policy. Empty today; never commit whatever an org pushes into it tomorrow.
 remote-settings.json
+
+# Claude Code runtime state: Chrome native host wrapper, feedback drafts, uploaded images
+chrome/
+feedback/
+uploads/
