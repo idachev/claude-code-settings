@@ -83,14 +83,20 @@ done
 [[ ! -f "$INPUT" ]] && { echo "input not found: $INPUT" >&2; exit 1; }
 [[ "$STYLE" != "shadow" && "$STYLE" != "laptop" ]] && { echo "invalid --style: $STYLE" >&2; exit 2; }
 
-# Resolve convert binary (bypass shell aliases if any)
-CONVERT="$(command -v magick 2>/dev/null || command -v convert)"
-[[ -z "$CONVERT" ]] && { echo "ImageMagick (magick/convert) not found" >&2; exit 1; }
-# prefer the "magick" subcommand form when available
-if [[ "$(basename "$CONVERT")" == "magick" ]]; then CONVERT="$CONVERT"; fi
-
-IDENTIFY="$(command -v magick 2>/dev/null && echo magick\ identify || command -v identify)"
-IDENTIFY=${IDENTIFY:-identify}
+# Resolve the ImageMagick binaries (bypass shell aliases if any).
+# v7 ships one "magick" entry point; v6 ships separate "convert" and "identify".
+# Both are arrays because the v7 form needs two words: magick identify.
+if magick_bin="$(command -v magick 2>/dev/null)"; then
+  CONVERT=("$magick_bin")
+  IDENTIFY=("$magick_bin" identify)
+elif convert_bin="$(command -v convert 2>/dev/null)" \
+  && identify_bin="$(command -v identify 2>/dev/null)"; then
+  CONVERT=("$convert_bin")
+  IDENTIFY=("$identify_bin")
+else
+  echo "ImageMagick not found: need 'magick' (v7), or both 'convert' and 'identify' (v6)" >&2
+  exit 1
+fi
 
 # Default output path
 if [[ -z "$OUTPUT" ]]; then
@@ -100,12 +106,12 @@ if [[ -z "$OUTPUT" ]]; then
   OUTPUT="${dir}/${stem}-${STYLE}.png"
 fi
 
-SW=$(command identify -format "%w" "$INPUT")
-SH=$(command identify -format "%h" "$INPUT")
+SW=$("${IDENTIFY[@]}" -format "%w" "$INPUT")
+SH=$("${IDENTIFY[@]}" -format "%h" "$INPUT")
 
 shadow_step() {
   # $1 = input, $2 = output
-  "$CONVERT" "$1" \
+  "${CONVERT[@]}" "$1" \
     \( +clone -background black -shadow "${SH_OPACITY}x${SH_BLUR}+${SH_X}+${SH_Y}" \) \
     +swap -background none -layers merge +repage \
     "$2"
@@ -135,7 +141,7 @@ else
   TMP="$(mktemp --suffix=.png)"
   trap 'rm -f "$TMP"' EXIT
 
-  "$CONVERT" -size ${CANVAS_W}x${CANVAS_H} xc:none \
+  "${CONVERT[@]}" -size ${CANVAS_W}x${CANVAS_H} xc:none \
     -fill "#0a0a0a" \
       -draw "roundrectangle ${NX1},${NY1} ${NX2},${NY2} ${NOTCH_ROUND},${NOTCH_ROUND}" \
     -fill "#0a0a0a" \
@@ -153,4 +159,4 @@ else
 fi
 
 echo "wrote: $OUTPUT"
-command identify -format "  %wx%h  %b\n" "$OUTPUT"
+"${IDENTIFY[@]}" -format "  %wx%h  %b\n" "$OUTPUT"

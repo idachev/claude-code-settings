@@ -19,11 +19,17 @@ Skip if the user wants a 3D perspective render, a real photo composite, or a spe
 
 ## Prerequisite
 
-`ImageMagick` must be installed (`magick` or `convert` in `$PATH`). On Debian/Ubuntu: `sudo apt install imagemagick`.
+ImageMagick must be installed. Version 7 is enough on its own (`magick` in `$PATH`); version 6 needs **both** `convert` and `identify`, because the script measures the input before drawing. On Debian/Ubuntu: `sudo apt install imagemagick`. The script exits with a clear message when neither form is available.
 
 ## Usage
 
-The script lives at `scripts/image-mockup.sh` next to this SKILL.md (absolute path: `~/.claude/skills/image-mockup/scripts/image-mockup.sh`).
+The script lives at `scripts/image-mockup.sh` next to this SKILL.md. Resolve the path from this file rather than assuming a fixed home, because `$CLAUDE_CONFIG_DIR` can move the config directory:
+
+```bash
+SKILL_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/image-mockup"
+```
+
+The examples below use `~/.claude/skills/image-mockup/`, which is correct when `$CLAUDE_CONFIG_DIR` is unset.
 
 ```bash
 ~/.claude/skills/image-mockup/scripts/image-mockup.sh [--style shadow|laptop] INPUT [OUTPUT]

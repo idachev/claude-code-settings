@@ -9,6 +9,7 @@ session-env/
 shell-snapshots/
 todos/
 tasks/
+teams/
 file-history/
 
 # Managed by plugin system (large, reproducible)
@@ -50,7 +51,10 @@ security/
 # Pre-push review tooling — installed/managed externally
 prepush-review/
 
-# Stray nested dir
+# Project-local settings for the config directory itself. Not stray: when a
+# session runs with ~/.claude as its working directory, Claude Code reads
+# ~/.claude/.claude/settings.local.json as that project's local settings.
+# Machine-local by design, so it stays out of git.
 .claude/
 
 # Shared agent skills + their version lock. The `skills` CLI writes these into
@@ -74,6 +78,12 @@ settings.json.bak*
 # Live Claude Code state: OAuth session, identifiers, every local project.
 # The versionable slice is snapshotted to .claude-git.json by a pre-commit hook.
 .claude.json
+
+# Local cache of organization-managed policy settings, fetched from the Anthropic
+# API and rewritten by Claude Code (mode 0600). It is the highest-priority layer
+# in the settings merge, so it can carry org-pushed hosts, proxies and tool
+# policy. Empty today; never commit whatever an org pushes into it tomorrow.
+remote-settings.json
 
 # Claude Code runtime state: Chrome native host wrapper, feedback drafts, uploaded images
 chrome/
