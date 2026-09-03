@@ -10,17 +10,15 @@ after it is revalidated against the real code. Nothing is committed.
 
 ## When not to use
 
-- The user wants the review alone, with no fixes. Run the diff review skill directly:
-  `/sc-sdlc:be-review-diff` or `/sc-sdlc:fe-review-diff`.
-- The user wants the branch checked against a written plan and reported, not fixed. Use
-  `sc-sdlc:verify-impl`, or `verify-impl-kb` when the internal knowledge bases matter.
+- The user wants the review alone, with no fixes. Run `/code-review` directly and report.
+- The user wants the branch checked against a written plan and reported, not fixed. Compare the
+  diff with the plan under `docs/plans/` and report the gaps; change nothing.
 - The branch has no commits yet, so there is no diff against the base.
 - The user asks for a commit, a push or a PR. This skill never does those.
 
 ## Step 1 — Review
 
-- Run the diff review skill for the repo type: `/sc-sdlc:be-review-diff` for a Java backend,
-  `/sc-sdlc:fe-review-diff` for a frontend repo. Base branch is `master` unless the user names
+- Run `/code-review` on the current branch. Base branch is `master` unless the user names
   another.
 - Consolidate all agent findings into one numbered list. Deduplicate. For each entry keep:
   `file:line`, the claim, the severity, the proposed fix.

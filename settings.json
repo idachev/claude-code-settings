@@ -59,6 +59,7 @@
   },
   "model": "claude-fable-5-1[1m]",
   "skillOverrides": {
+    "hashtag-researcher": "off",
     "image-mockup": "off"
   },
   "hooks": {
