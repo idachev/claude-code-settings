@@ -57,8 +57,7 @@ Repeat for every finding, in list order. Never batch several unvalidated finding
 | **INVALID** | The code already behaves correctly, or the claim is wrong | Change nothing. Record why, with evidence: `file:line`, test name, contract line. |
 | **DECISION** | The finding contradicts a decision recorded in the design doc, or needs product input | Change nothing. Record the question for the user. |
 
-- Log every Maven run to `./tmp/claude-logs/<name>-$(date +%Y%m%d-%H%M%S).log`. Follow the
-  `java-stack:java-maven` skill for flags and wrapper use.
+- Log every Maven run to `./tmp/claude-logs/<name>-$(date +%Y%m%d-%H%M%S).log`.
 - When a test run fails at discovery ("Could not load class") with a wildcard `-Dtest` pattern,
   rerun with explicit class names and `-am` before suspecting the code.
 
@@ -81,6 +80,6 @@ Repeat for every finding, in list order. Never batch several unvalidated finding
 - Every claim in the report points to a `file:line`, a test, or a log line.
 - Do not re-open decisions recorded in the design doc. List them under DECISION instead.
 - Comments and Javadoc carry only facts the code cannot show. Cite Jira keys, never plan step
-  numbers. See `java-stack:java-comments`.
+  numbers.
 - A finding that only restates an accepted trade-off from the design doc is INVALID, not a fix.
 - If the user answers a DECISION item, treat the answer as final and apply it without re-arguing.
