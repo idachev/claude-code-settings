@@ -57,7 +57,7 @@
     "ask": [],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "opus[1m]",
   "skillOverrides": {
     "hashtag-researcher": "off",
     "image-mockup": "off"
@@ -191,7 +191,9 @@
     "superpowers@claude-plugins-official": true,
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "xmind-builder@xmind-skills": false,
-    "cloudflare@cloudflare": false
+    "cloudflare@cloudflare": false,
+    "clean-code@ai-marketplace": true,
+    "branch-board@ai-marketplace": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -223,6 +225,12 @@
       "source": {
         "source": "github",
         "repo": "cloudflare/skills"
+      }
+    },
+    "ai-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "git@github-mentorano:mentorano/ai-marketplace.git"
       }
     }
   },
