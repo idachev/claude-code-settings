@@ -1,0 +1,157 @@
+{
+  "cleanupPeriodDays": 365,
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(./build-dev.sh:*)",
+      "Bash(./build-project.sh:*)",
+      "Bash(./mvnw:*)",
+      "Bash(bd:*)",
+      "Bash(cat:*)",
+      "Bash(command cat:*)",
+      "Bash(command find:*)",
+      "Bash(command grep:*)",
+      "Bash(command head:*)",
+      "Bash(command ls:*)",
+      "Bash(command tail:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(gh api:*)",
+      "Bash(gh pr:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git grep:*)",
+      "Bash(git help:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(git subtree:*)",
+      "Bash(grep:*)",
+      "Bash(jar tf:*)",
+      "Bash(ls:*)",
+      "Bash(mvn test:*)",
+      "Bash(rg:*)",
+      "Bash(test:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "WebFetch(domain:best-hashtags.com)",
+      "WebFetch(domain:displaypurposes.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.quarkiverse.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:java.testcontainers.org)",
+      "WebFetch(domain:mapstruct.org)",
+      "WebFetch(domain:mvnrepository.com)",
+      "WebFetch(domain:quarkus.io)",
+      "WebFetch(domain:ritetag.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Skill(code-review:code-review)",
+      "WebSearch",
+      "Bash(command mvn:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "skillOverrides": {
+    "hashtag-researcher": "off",
+    "image-mockup": "off"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/bin/claude-input-notify.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/bin/claude-statusline.sh"
+  },
+  "enabledPlugins": {
+    "atlassian-tools@sc-marketplace": false,
+    "claude-md-management@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "java-stack@sc-marketplace": true,
+    "ms-amplifier@sc-marketplace": false,
+    "sc-sdlc@sc-marketplace": true,
+    "security-guidance@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "codex@openai-codex": false,
+    "playwright@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": false,
+    "xmind-builder@xmind-skills": false,
+    "pdf2epub@pdf2epub-skills": false,
+    "pyright-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    },
+    "xmind-skills": {
+      "source": {
+        "source": "github",
+        "repo": "idachev/xmind-skills"
+      }
+    },
+    "pdf2epub-skills": {
+      "source": {
+        "source": "github",
+        "repo": "idachev/pdf2epub-skills"
+      },
+      "autoUpdate": true
+    }
+  },
+  "outputStyle": "simple",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "autoCompactEnabled": false,
+  "switchModelsOnFlag": true,
+  "autoScrollEnabled": true,
+  "remoteControlAtStartup": true,
+  "skipAutoPermissionPrompt": true
+}
