@@ -168,3 +168,77 @@ answer "точка 3" instead of quoting the text back. This covers the
 
 **Why:** Ivan has asked for this several times. Without IDs he has to copy
 the item's text to point at it.
+
+## Close Every Decision Inside A One-By-One Pass
+
+When Ivan asks to go through review findings one by one and to ask him about
+anything that changes behaviour, the goal of that pass is to close every
+decision. If fixing a finding brings up a new choice (a new name in the
+ubiquitous language, a missing button, an unknown fact such as the phone
+model), ask it right there as the next one-by-one question. Do not collect such
+points into an "open points" list in the final report.
+
+**Why:** after one such pass Ivan asked, surprised, why there were still open
+points when the pass was meant to close them. Leftover points force a second
+round that he expected to be unnecessary.
+
+## New Personal Android Apps Start From The Official Template
+
+Start every new personal Android app from the official Google template, not
+from a hand-written Gradle setup. First update the Android CLI
+(`android update`, binary in `~/.local/bin/android`) so the template is the
+latest one. Then run `android create empty-activity --name="<App Name>"`. The
+template gives the package `com.example.<name>`; Ivan's apps use
+`com.idachev.<name>`.
+
+Take the structure and build conventions from `~/develop/personal/financy`:
+`build-project.sh` (unit tests + debug APK, timestamped log), a `CLAUDE.md` in
+Bulgarian, `docs/CONTEXT.md` as the ubiquitous-language glossary, manual DI
+through `AppContainer`, debug-only builds, and a deploy script that copies a
+timestamped APK to `~/Dropbox/mobile/idachev/<app>/` and moves older ones to
+`old/` (see `scripts/deploy-apk.sh` in `meet-no-miss`).
+
+**Why:** the template's version set is known to compile, and shared
+conventions keep Ivan's apps consistent.
+
+## Second-Opinion Reviews Go Through Codex With `gpt-6-astra`
+
+When Ivan asks for a review or a second opinion from another model, use
+Codex. It handles reviews better than the other CLIs he tried. Ivan calls the
+model "astra", but the id Codex accepts is **`gpt-6-astra`**. The bare name
+fails with `The 'astra' model is not supported when using Codex with a ChatGPT
+account.` Always pass the full id, even though it is also the default in
+`~/.codex/config.toml`, so the call does not depend on that file.
+
+- Plugin, through `codex:codex-rescue`: start the prompt with
+  `--model gpt-6-astra --effort medium`, then the read-only review request.
+  Ivan's usual effort for reviews is `medium` (the config default is `high`).
+- Direct CLI, when the prompt is long or needs extra repos:
+  `command codex exec -m gpt-6-astra -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`,
+  with the log in `./tmp/claude-logs/` and a timestamp in the name.
+- `/codex:review` takes only `--wait|--background`, `--base` and `--scope`,
+  and passes `--model` through raw. It has no `--effort` and no focus text; use
+  `/codex:adversarial-review` or `codex exec` when a focus is needed.
+- A review can take 10+ minutes: run it in the background or with a 600000 ms
+  timeout.
+- Codex runs on Ivan's ChatGPT account and can hit its usage limit ("You've
+  hit your usage limit … try again at …"). Do not stop and wait for Ivan. Fall
+  back in this order, each one only when the previous one fails or has no
+  usage left:
+  1. grok: `command grok -p "<prompt>" --cwd <repo>` (check `grok models` for
+     the newest model and pass it with `-m`);
+  2. agy: `command agy -p "<prompt>" --model <newest from agy models> --print-timeout 300s`;
+  3. a fresh Claude subagent (Agent tool) with no context from this session,
+     so its review is independent.
+  Tell Ivan afterwards which reviewer ran and why.
+- Exception — large blast radius: if the change is big or risky (many files, a
+  data migration, deletions, anything hard to undo) and Codex is out of usage,
+  stop and wait for Ivan instead of relying on a fallback review. Say when the
+  Codex quota resets.
+- Complex task: use 2 or 3 reviewers instead of one (Codex plus grok, agy or
+  a fresh Claude subagent). Merge their findings, then hold a consultation:
+  send each reviewer the findings of the others and ask which ones it confirms
+  or disputes, and why. A finding that two reviewers agree on weighs more; a
+  disputed one gets a closer look at the source before any fix.
+- Check every Codex finding against the source before fixing it (see
+  Self-Review above).
