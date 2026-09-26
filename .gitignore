@@ -99,3 +99,6 @@ remote-settings.json
 chrome/
 feedback/
 uploads/
+
+# captain plugin per-machine state: config, notify wrapper, run calibration log
+captain/
