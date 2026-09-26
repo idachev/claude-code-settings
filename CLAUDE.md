@@ -156,18 +156,27 @@ call per tool.
 
 ## Number Every Item In Every List
 
-Every item in every user-facing list gets a short unique ID, so Ivan can
-answer "точка 3" instead of quoting the text back. This covers the
-**Списък** section, review findings, options, open points and questions.
+Every user-facing item gets a topic ID: two Cyrillic letters plus a number,
+so Ivan can answer "ВР1" instead of quoting the text back. This covers list
+items (the **Списък** section too), questions, answer options, status lines,
+open points, and entries written into a project TODO file.
 
-- Number items continuously across the whole reply (1, 2, 3 …), so no two
-  items share an ID, even across sub-lists. Review findings may use F1, F2 ….
-- Keep an item's ID when it comes up again later in the same reply, and in
-  a follow-up reply that returns to the same item.
-- Plain unlabelled bullets ("- Отворено: …") are not enough.
+- Choose the letters by the item's topic: `ВР1` for time, `ГР2` for scope
+  boundaries, `ОП1` for answer options.
+- Items of one topic share the letters and count up (`ВР1`, `ВР2` …), so no
+  two items share an ID.
+- Keep an item's ID when it comes back later in the same reply, and in a
+  follow-up reply that returns to the same item.
+- Review findings may stay `F1`, `F2` ….
+- Plain numbers and unlabelled bullets ("- Отворено: …") are not enough.
+
+**How to apply:** before sending a reply or writing a TODO entry, give each
+item its topic ID. Reuse an existing ID for an item already shown (or already
+in the TODO file); start a new topic at 1.
 
 **Why:** Ivan has asked for this several times. Without IDs he has to copy
-the item's text to point at it.
+the item's text to point at it. Plain numbers clashed with the TODO file's
+own numbering, and Latin one-letter prefixes carry no topic.
 
 ## Close Every Decision Inside A One-By-One Pass
 
@@ -186,80 +195,9 @@ Never invent the answer.
 points when the pass was meant to close them. Leftover points force a second
 round that he expected to be unnecessary.
 
-## Second-Opinion Reviews Go Through Codex With `gpt-6-astra`
+## Codex Facts
 
-This section applies when Ivan asks for a review by another model, names a
-reviewer, or another rule calls for an external review. A review he asks *you*
-to do stays the Self-Review above; this section never replaces it.
-
-Ivan calls the model "astra", but the id Codex accepts is **`gpt-6-astra`**. The
-bare name fails with `The 'astra' model is not supported when using Codex with
-a ChatGPT account.` Always pass the full id, and effort `medium` (the config
-default in `~/.codex/config.toml` is `high`).
-
-**Which reviewers.**
-
-- Ivan named one or more reviewers: use exactly those.
-- Otherwise, one reviewer: Codex.
-- Otherwise, for a complex change, two: Codex plus grok. Complex means it spans
-  several modules, touches persistence, security or concurrency, or chooses
-  between two designs that could both be correct.
-- A third (agy, or a fresh subagent) only when the first two disagree on a
-  high-severity finding: one that would ship a bug, lose or expose data, or
-  break a published contract. Style and naming disagreements do not count.
-
-**How to run a reviewer.** Every pass, including consultations, is read-only.
-
-- Write the prompt to a file with an absolute path:
-  `<repo>/tmp/claude-logs/<reviewer>-<topic>-<timestamp>.prompt.md` (create
-  the folder first). Log each run next to it. Use the Bash tool's
-  `run_in_background`, not a trailing `&`: a review can take 10+ minutes.
-- The prompt says to report only and not to edit files. For agy and for
-  consultations, embed everything the reviewer needs — the diff, the relevant
-  source, the project rules — because it cannot fetch anything itself. Tell it
-  to name missing evidence instead of guessing.
-- Codex (default):
-  `command codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < <prompt-file> > <log> 2>&1`.
-  Add `--add-dir <path>` once per extra repo. Prefer this over the plugin:
-  `/codex:review` cannot set the effort, so it runs at `high`. Use the plugin
-  only through `codex:codex-rescue`, with the prompt starting
-  `--fresh --model gpt-6-astra --effort medium` and the words "read-only".
-- grok: `command grok --prompt-file <prompt-file> --cwd <repo> --permission-mode plan -m <id> > <log> 2>&1`.
-  `<id>` is the current default from `grok models`.
-- agy (no directory flag; run it from the repo):
-  `command agy -p "$(command cat <prompt-file>)" --model <id> --mode plan --print-timeout 0s > <log> 2>&1`.
-  `<id>` is the newest from `agy models`. Start the prompt with "Do not run
-  any tools": headless agy denies tool calls and then returns nothing.
-- A fresh Claude subagent: a read-only agent type (`Explore`), given the diff
-  and the question but not your own conclusions.
-- An empty log, or one without findings, is a failed review, not a clean one.
-  Show it and do not count it as agreement.
-
-**Consultation.** With two or more reviewers, send each one a new one-shot
-prompt with its own findings and those of the others, and ask which it
-confirms or disputes, and why. The CLIs keep no memory, so the prompt carries
-the full context. A reviewer that hits its usage limit here is skipped; say so.
-
-**When a reviewer is out of usage** ("You've hit your usage limit … try again
-at …"):
-
-- Codex, and Ivan did not name it: do not wait for Ivan. Take the next
-  reviewer not already in the pass, in this order: grok, agy, a fresh
-  subagent. A complex change still gets two distinct reviewers. This file
-  overrides the Codex plugin's rule never to substitute another answer, but
-  only for this fallback.
-- A reviewer Ivan named: do not substitute. Report the reset time and ask
-  whether to wait or fall back.
-- Only a usage limit moves to the next reviewer. A bad flag or wrong path is
-  your mistake: fix it and rerun. `argument list too long` from agy: skip agy,
-  say so. Any other error: show it and stop.
-- Exception — large blast radius: a data migration, deletion of persisted data,
-  auth or security code, a published API, or anything a `git revert` does not
-  undo (written data, credentials, an external contract). Then do not fall
-  back. Stop, copy the reset time from the error (say so if there is none),
-  and wait for Ivan.
-- Tell Ivan afterwards which reviewer ran and why.
-
-**Findings.** Check every finding from every reviewer against the source before
-fixing it (see Self-Review above). Agreement between reviewers raises a
-finding's priority; it never replaces that check.
+- The Codex model id is `gpt-6-astra`; people call it "astra", but `--model astra` fails with HTTP 400 on a ChatGPT account. Always pass the full id.
+- Effort: `medium` by default; `high` only for review of very complex specs or implementations, assessment of critical actions, or complex consensus. The config default in `~/.codex/config.toml` is `high`, so pass effort explicitly.
+- Direct CLI (the shell aliases `codex`): `command timeout 1200 codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`, log in `./tmp/claude-logs/` with a timestamp; tell it not to browse the web.
+- For coordinated multi-agent work use the `captain` skill (`/captain`); it holds the review loop, fallbacks and consensus rules.
