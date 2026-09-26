@@ -174,7 +174,7 @@
     "claude-md-management@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": false,
-    "codex@openai-codex": false,
+    "codex@openai-codex": true,
     "commit-commands@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
@@ -193,7 +193,8 @@
     "cloudflare@cloudflare": false,
     "clean-code@ai-marketplace": true,
     "branch-board@ai-marketplace": true,
-    "utils@ai-marketplace": true
+    "utils@ai-marketplace": true,
+    "captain@ai-marketplace": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
