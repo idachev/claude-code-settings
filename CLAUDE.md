@@ -178,67 +178,88 @@ ubiquitous language, a missing button, an unknown fact such as the phone
 model), ask it right there as the next one-by-one question. Do not collect such
 points into an "open points" list in the final report.
 
+The only exception: Ivan does not know the answer or explicitly defers the
+choice. Then keep that question with its ID in the report, marked as deferred.
+Never invent the answer.
+
 **Why:** after one such pass Ivan asked, surprised, why there were still open
 points when the pass was meant to close them. Leftover points force a second
 round that he expected to be unnecessary.
 
-## New Personal Android Apps Start From The Official Template
-
-Start every new personal Android app from the official Google template, not
-from a hand-written Gradle setup. First update the Android CLI
-(`android update`, binary in `~/.local/bin/android`) so the template is the
-latest one. Then run `android create empty-activity --name="<App Name>"`. The
-template gives the package `com.example.<name>`; Ivan's apps use
-`com.idachev.<name>`.
-
-Take the structure and build conventions from `~/develop/personal/financy`:
-`build-project.sh` (unit tests + debug APK, timestamped log), a `CLAUDE.md` in
-Bulgarian, `docs/CONTEXT.md` as the ubiquitous-language glossary, manual DI
-through `AppContainer`, debug-only builds, and a deploy script that copies a
-timestamped APK to `~/Dropbox/mobile/idachev/<app>/` and moves older ones to
-`old/` (see `scripts/deploy-apk.sh` in `meet-no-miss`).
-
-**Why:** the template's version set is known to compile, and shared
-conventions keep Ivan's apps consistent.
-
 ## Second-Opinion Reviews Go Through Codex With `gpt-6-astra`
 
-When Ivan asks for a review or a second opinion from another model, use
-Codex. It handles reviews better than the other CLIs he tried. Ivan calls the
-model "astra", but the id Codex accepts is **`gpt-6-astra`**. The bare name
-fails with `The 'astra' model is not supported when using Codex with a ChatGPT
-account.` Always pass the full id, even though it is also the default in
-`~/.codex/config.toml`, so the call does not depend on that file.
+This section applies when Ivan asks for a review by another model, names a
+reviewer, or another rule calls for an external review. A review he asks *you*
+to do stays the Self-Review above; this section never replaces it.
 
-- Plugin, through `codex:codex-rescue`: start the prompt with
-  `--model gpt-6-astra --effort medium`, then the read-only review request.
-  Ivan's usual effort for reviews is `medium` (the config default is `high`).
-- Direct CLI, when the prompt is long or needs extra repos:
-  `command codex exec -m gpt-6-astra -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`,
-  with the log in `./tmp/claude-logs/` and a timestamp in the name.
-- `/codex:review` takes only `--wait|--background`, `--base` and `--scope`,
-  and passes `--model` through raw. It has no `--effort` and no focus text; use
-  `/codex:adversarial-review` or `codex exec` when a focus is needed.
-- A review can take 10+ minutes: run it in the background or with a 600000 ms
-  timeout.
-- Codex runs on Ivan's ChatGPT account and can hit its usage limit ("You've
-  hit your usage limit … try again at …"). Do not stop and wait for Ivan. Fall
-  back in this order, each one only when the previous one fails or has no
-  usage left:
-  1. grok: `command grok -p "<prompt>" --cwd <repo>` (check `grok models` for
-     the newest model and pass it with `-m`);
-  2. agy: `command agy -p "<prompt>" --model <newest from agy models> --print-timeout 300s`;
-  3. a fresh Claude subagent (Agent tool) with no context from this session,
-     so its review is independent.
-  Tell Ivan afterwards which reviewer ran and why.
-- Exception — large blast radius: if the change is big or risky (many files, a
-  data migration, deletions, anything hard to undo) and Codex is out of usage,
-  stop and wait for Ivan instead of relying on a fallback review. Say when the
-  Codex quota resets.
-- Complex task: use 2 or 3 reviewers instead of one (Codex plus grok, agy or
-  a fresh Claude subagent). Merge their findings, then hold a consultation:
-  send each reviewer the findings of the others and ask which ones it confirms
-  or disputes, and why. A finding that two reviewers agree on weighs more; a
-  disputed one gets a closer look at the source before any fix.
-- Check every Codex finding against the source before fixing it (see
-  Self-Review above).
+Ivan calls the model "astra", but the id Codex accepts is **`gpt-6-astra`**. The
+bare name fails with `The 'astra' model is not supported when using Codex with
+a ChatGPT account.` Always pass the full id, and effort `medium` (the config
+default in `~/.codex/config.toml` is `high`).
+
+**Which reviewers.**
+
+- Ivan named one or more reviewers: use exactly those.
+- Otherwise, one reviewer: Codex.
+- Otherwise, for a complex change, two: Codex plus grok. Complex means it spans
+  several modules, touches persistence, security or concurrency, or chooses
+  between two designs that could both be correct.
+- A third (agy, or a fresh subagent) only when the first two disagree on a
+  high-severity finding: one that would ship a bug, lose or expose data, or
+  break a published contract. Style and naming disagreements do not count.
+
+**How to run a reviewer.** Every pass, including consultations, is read-only.
+
+- Write the prompt to a file with an absolute path:
+  `<repo>/tmp/claude-logs/<reviewer>-<topic>-<timestamp>.prompt.md` (create
+  the folder first). Log each run next to it. Use the Bash tool's
+  `run_in_background`, not a trailing `&`: a review can take 10+ minutes.
+- The prompt says to report only and not to edit files. For agy and for
+  consultations, embed everything the reviewer needs — the diff, the relevant
+  source, the project rules — because it cannot fetch anything itself. Tell it
+  to name missing evidence instead of guessing.
+- Codex (default):
+  `command codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < <prompt-file> > <log> 2>&1`.
+  Add `--add-dir <path>` once per extra repo. Prefer this over the plugin:
+  `/codex:review` cannot set the effort, so it runs at `high`. Use the plugin
+  only through `codex:codex-rescue`, with the prompt starting
+  `--fresh --model gpt-6-astra --effort medium` and the words "read-only".
+- grok: `command grok --prompt-file <prompt-file> --cwd <repo> --permission-mode plan -m <id> > <log> 2>&1`.
+  `<id>` is the current default from `grok models`.
+- agy (no directory flag; run it from the repo):
+  `command agy -p "$(command cat <prompt-file>)" --model <id> --mode plan --print-timeout 0s > <log> 2>&1`.
+  `<id>` is the newest from `agy models`. Start the prompt with "Do not run
+  any tools": headless agy denies tool calls and then returns nothing.
+- A fresh Claude subagent: a read-only agent type (`Explore`), given the diff
+  and the question but not your own conclusions.
+- An empty log, or one without findings, is a failed review, not a clean one.
+  Show it and do not count it as agreement.
+
+**Consultation.** With two or more reviewers, send each one a new one-shot
+prompt with its own findings and those of the others, and ask which it
+confirms or disputes, and why. The CLIs keep no memory, so the prompt carries
+the full context. A reviewer that hits its usage limit here is skipped; say so.
+
+**When a reviewer is out of usage** ("You've hit your usage limit … try again
+at …"):
+
+- Codex, and Ivan did not name it: do not wait for Ivan. Take the next
+  reviewer not already in the pass, in this order: grok, agy, a fresh
+  subagent. A complex change still gets two distinct reviewers. This file
+  overrides the Codex plugin's rule never to substitute another answer, but
+  only for this fallback.
+- A reviewer Ivan named: do not substitute. Report the reset time and ask
+  whether to wait or fall back.
+- Only a usage limit moves to the next reviewer. A bad flag or wrong path is
+  your mistake: fix it and rerun. `argument list too long` from agy: skip agy,
+  say so. Any other error: show it and stop.
+- Exception — large blast radius: a data migration, deletion of persisted data,
+  auth or security code, a published API, or anything a `git revert` does not
+  undo (written data, credentials, an external contract). Then do not fall
+  back. Stop, copy the reset time from the error (say so if there is none),
+  and wait for Ivan.
+- Tell Ivan afterwards which reviewer ran and why.
+
+**Findings.** Check every finding from every reviewer against the source before
+fixing it (see Self-Review above). Agreement between reviewers raises a
+finding's priority; it never replaces that check.
