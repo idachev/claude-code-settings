@@ -195,6 +195,29 @@ Never invent the answer.
 points when the pass was meant to close them. Leftover points force a second
 round that he expected to be unnecessary.
 
+## Notify Ivan Only When He Is Away From The Laptop
+
+A phone ping (msg-notify, the captain `notify.sh`, or any other push) goes out only
+when Ivan is away from this laptop. Away means: no keyboard, mouse or trackpad input
+for the 15 minutes after the event that needs him. Any input in that window means he
+sees the chat, so no ping.
+
+Send every ping through `~/.claude/scripts/notify-when-away.sh <command> [args...]`.
+It returns at once, watches macOS `HIDIdleTime` in the background, and runs the
+command only after 15 minutes with no input. Its log is
+`~/.claude/logs/notify-when-away.log`. Always put the question in the chat too.
+
+**Why:** Ivan was typing in the console and his phone rang with a ping from the
+captain run. A message in the chat is enough while he sits at the laptop.
+
+The captain wrapper `~/.claude/captain/notify.sh` has the same check built in (from
+the captain plugin's `notify.sh.tmpl`, window `away_minutes` in
+`~/.claude/captain/config.json`, log `~/.claude/captain/notify.log`); call it as is.
+
+Transport details (which script, `claude`/`grok` source, Mail.app) belong to the
+msg-notify skill. Quiet hours, the method and the captain window belong to
+`~/.claude/captain/config.json`.
+
 ## Codex Facts
 
 - The Codex model id is `gpt-6-astra`; people call it "astra", but `--model astra` fails with HTTP 400 on a ChatGPT account. Always pass the full id.
