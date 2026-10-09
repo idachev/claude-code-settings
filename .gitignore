@@ -99,3 +99,9 @@ remote-settings.json
 chrome/
 feedback/
 uploads/
+
+# macOS Finder metadata
+.DS_Store
+
+# Claude build/push logs
+tmp/
