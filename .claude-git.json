@@ -20,7 +20,7 @@
       "type": "http",
       "url": "https://textbook-catalog.igdoptin.workers.dev/mcp",
       "headers": {
-        "X-API-Key": "MIXeRPpOFm_-PHN9g6FHQc7uCdgv5BDqh_4Bv5ub1V4"
+        "X-API-Key": "${TC_API_KEY}"
       }
     }
   }
