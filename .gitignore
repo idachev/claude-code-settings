@@ -102,3 +102,9 @@ uploads/
 
 # captain plugin per-machine state: config, notify wrapper, run calibration log
 captain/
+
+# macOS Finder metadata
+.DS_Store
+
+# Claude build/push logs
+tmp/
