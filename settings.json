@@ -165,6 +165,18 @@
         ]
       }
     ],
+    "StopFailure": [
+      {
+        "matcher": "server_error|unknown|overloaded",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/scripts/api-error-resume.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
