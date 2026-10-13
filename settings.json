@@ -219,7 +219,8 @@
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "utils@ai-marketplace": true,
     "xmind-builder@xmind-skills": false,
-    "3amigos@ai-marketplace": true
+    "3amigos@ai-marketplace": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "ai-marketplace": {
