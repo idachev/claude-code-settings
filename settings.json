@@ -122,7 +122,9 @@
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "xmind-builder@xmind-skills": false,
     "pdf2epub@pdf2epub-skills": false,
-    "pyright-lsp@claude-plugins-official": true
+    "pyright-lsp@claude-plugins-official": true,
+    "cc-safety-net@cc-marketplace": true,
+    "blast-radius@ai-marketplace": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -149,6 +151,19 @@
         "repo": "idachev/pdf2epub-skills"
       },
       "autoUpdate": true
+    },
+    "ai-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "git@github-mentorano:mentorano/ai-marketplace.git"
+      },
+      "autoUpdate": true
+    },
+    "cc-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "kenryu42/cc-marketplace"
+      }
     }
   },
   "outputStyle": "simple",
