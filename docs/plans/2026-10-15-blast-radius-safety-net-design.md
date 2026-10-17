@@ -1,6 +1,7 @@
 # Blast Radius и CC Safety Net при нощни и away run-ове — предложение за промяна
 
-Дата: 2026-10-15. Статус: **решено** (виж §6), още нищо не е направено.
+Дата: 2026-10-15. Статус: **ревизирано 2026-10-17** (виж §8): Blast Radius е махнат, fork-ът на Safety Net е
+готов и е в GitHub, но още не е инсталиран.
 Източник на числата: анализ ЗД19 на captain run `20261015-031332` в repo `plexibits-dev/ivan-games`
 (`tmp/captain/20261015-031332/reports/denials-ЗД19.md`, скрипт `denials-ЗД19.py` до него). Период 03:00–07:40, 77 transcript-а.
 
@@ -99,7 +100,7 @@
 
 ### CC Safety Net
 - **РШ5 (ОТ2).** Правим своя версия. Клонът е в `~/develop/github/kenryu42/cc-safety-net`.
-- **РШ6 (ОТ2а).** Нашият branch тръгва от `master` на автора (21 commit-а след `v2.6.11`).
+- **РШ6 (ОТ2а).** Нашият branch тръгва от `main` на автора (на 2026-10-17 това е `v2.6.13`).
 - **РШ7 (ОТ2б).** Правим ПР6 (project policy се търси нагоре до git root) и ПР8 (`secret.home.*` спира само когато
   пътят е аргумент на команда, която чете файла). ПТ3 трябва да остане зелен.
 - **РШ8 (ОТ2в, ОТ2г).** Fork `mentorano/cc-safety-net` в GitHub. `ai-marketplace` сочи към fork-а с `git-subdir`
@@ -120,3 +121,48 @@
 - **ОТ1.** За Blast Radius: ОП1а (изключен в away), ОП1б (сам усеща idle) или ПР2 (allow list + кратък лимит)?
 - **ОТ2.** ПР5 сега (user policy, един ред в GUI-то) и ПР6/ПР8 като предложения към авторите на plugin-а. Съгласен ли си?
 - **ОТ3.** ПР7: да се промени ли captain skill-ът да пише prompt файловете с Write tool, след проверката от ПР7?
+
+## 8. Ревизия 2026-10-17: махаме Blast Radius, оправяме fork-а на Safety Net
+
+### Данни (транскрипти от 15.10 до 17.10, 505 файла)
+- **ДН1.** Blast Radius: 22 отказа, всички „no answer within 10 minutes“, 0 Cancel, 0 полезни. 15 × 600 s ≈ 2,5 часа
+  чакане на агенти. Всички цели са собствени файлове на агента или миграции на тестова база.
+- **ДН2.** Около 10 от 22-та отказа са извън away run. Затова флагът от РШ1/РШ13 не стига.
+- **ДН3.** Blast Radius задържа и текст: думата за миграция в низ или в heredoc. В сесията от 17.10 това стана три
+  пъти с команди, които само пишат файлове.
+- **ДН4.** Safety Net: 35 отказа, всеки струва по един ход. Два фалшиви отказа спряха subagent.
+- **ДН5.** Главната причина за фалшивите откази по `secret.home.*`: heredoc през `command cat` (правилото от
+  CLAUDE.md) се сканира като shell. С bare `cat` същият текст минава.
+
+### Решения (Иван, 2026-10-17)
+- **ВП1 → ОП1.** Blast Radius се маха изцяло. РШ1–РШ4, РШ13, ПР2–ПР4 и ПТ1 отпадат.
+- **ВП2 → ОП3.** Приемаме, че `rm -r` на работа без commit вече не се задържа.
+- **ВП3 → ОП5.** Rulebook `db-guard` в user rules: `alembic downgrade`, `docker volume rm|prune`,
+  `docker compose down -v`. `dropdb`, `psql -c "drop database …"` и SQL в heredoc не могат да се хванат с rulebook.
+- **ВП4 → ОП7.** ПР8 важи за всички `secret.*` и за `guard.policy-config`.
+- **ВП5 → ОП9.** `git checkout -- <file>` остава спрян.
+- **СН1 → ОП11.** `docker exec … psql <<'EOF'` с `k.key` остава спрян. Тялото се чете като shell нарочно
+  (`docker exec`/`ssh` пускат shell).
+- **СН2 → ОП13.** Python heredoc със `s.replace('<път>', …)` остава спрян (`Path.replace` пише).
+- **ИЗ1 → ОП15.** Fork `mentorano/cc-safety-net` в GitHub (публичен, както всеки fork на публичен repo).
+- **ИЗ2 → ОП17.** Commit без push в `ai-marketplace` и `~/.claude`.
+
+### Направено
+- **НП1.** `blast-radius@ai-marketplace` е деинсталиран. Записът и README разделът в `ai-marketplace` са махнати.
+- **НП2.** Fork branch `ivan/secret-text-false-positives` (3 commit-а върху `v2.6.13`, `bun run check` зелен):
+  - `command cat`/`env cat` heredoc е запис на данни, както bare `cat` (реален случай 5 вече минава);
+  - `git diff|log|show|status|blame` може да назовава policy файла (реален случай 1 вече минава);
+    присвояване, `env`, `-c`, `--config-env` и `--output` пазят стария отказ;
+  - ПР6: project policy се чете от най-близката `.cc-safety-net/` до git root (и в worktree).
+    Относителните `allow_paths` се разрешават спрямо този корен. Root policy-то е защитено и от поддиректория.
+- **НП3.** `ai-marketplace`: запис `cc-safety-net` към fork-а на sha `3b4fe37a`, ред в README за ръчното
+  обновяване (РШ10). Тестът за външни plugin-и приема и `url` източник със sha.
+
+### Остава
+- **ОС1.** Push на `ai-marketplace` и `~/.claude` (Иван решава).
+- **ОС2.** След push: инсталация на `cc-safety-net@ai-marketplace`, проверка, после изключване на
+  `cc-safety-net@cc-marketplace`.
+- **ОС3.** РШ9 и ОП5: файловете за `~/.cc-safety-net/` са готови. Иван ги копира с `!` команда, защото guard-ът
+  не позволява на агент да пише там. РШ9 е по избор и временен: allow path в user policy пуска четенето на
+  ключовете в `sa-keys/` от агенти във всяко repo, не само в `ivan-games`. Махни го след ОС2.
+- **ОС4.** Повторен анализ на отказите след следващ away run (ПТ2–ПТ4).

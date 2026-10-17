@@ -222,8 +222,7 @@
     "3amigos@ai-marketplace": true,
     "cc-plugin-you-should-know@builtin": true,
     "project-memory@ai-marketplace": true,
-    "cc-safety-net@cc-marketplace": true,
-    "blast-radius@ai-marketplace": true
+    "cc-safety-net@cc-marketplace": true
   },
   "extraKnownMarketplaces": {
     "ai-marketplace": {
