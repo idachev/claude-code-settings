@@ -222,7 +222,8 @@
     "3amigos@ai-marketplace": true,
     "cc-plugin-you-should-know@builtin": true,
     "project-memory@ai-marketplace": true,
-    "cc-safety-net@cc-marketplace": true
+    "cc-safety-net@cc-marketplace": false,
+    "cc-safety-net@ai-marketplace": true
   },
   "extraKnownMarketplaces": {
     "ai-marketplace": {
@@ -284,7 +285,7 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "high"
     },
     "claude-haiku-5-5": {
       "effortLevel": "high"
