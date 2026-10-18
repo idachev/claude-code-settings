@@ -150,7 +150,8 @@
 
 ### Направено
 - **НП1.** `blast-radius@ai-marketplace` е деинсталиран. Записът и README разделът в `ai-marketplace` са махнати.
-- **НП2.** Fork branch `ivan/secret-text-false-positives` (3 commit-а върху `v2.6.13`, `bun run check` зелен):
+- **НП2.** Fork `main` на `3b4fe37a` (3 commit-а върху `v2.6.13`, `bun run check` зелен; работният branch
+  `ivan/secret-text-false-positives` е изтрит на 2026-10-18 след преместването на `main`):
   - `command cat`/`env cat` heredoc е запис на данни, както bare `cat` (реален случай 5 вече минава);
   - `git diff|log|show|status|blame` може да назовава policy файла (реален случай 1 вече минава);
     присвояване, `env`, `-c`, `--config-env` и `--output` пазят стария отказ;
