@@ -38,9 +38,10 @@ fixing an unconfirmed one changes working code for no reason.
 
 ## Do Not Create GitHub Repos Without Explicit Permission
 
-Do not run `gh repo create` (or any `gh` command that creates a repository) unless the user
-explicitly asked to create a GitHub repo. "commit and push" is not permission. If `origin` is
-missing, commit locally, say there is no remote, and wait.
+Do not run `gh repo create` (or any `gh` command that creates a repository). A deny rule in
+`settings.json` blocks it. When the user explicitly asks for a repo, give them the command to
+run themselves with `! `, in its own code block. "commit and push" is not such a request. If
+`origin` is missing, commit locally, say there is no remote, and wait.
 
 Do not pick a GitHub account from the current `gh auth` default. Personal repos go to
 `idachev` (`git@github-idachev:idachev/...`), not `ivan-mentorano`, unless the user named
