@@ -49,8 +49,7 @@
       "WebFetch(domain:ritetag.com)",
       "WebFetch(domain:stackoverflow.com)",
       "Skill(code-review:code-review)",
-      "WebSearch",
-      "Bash(command mvn:*)"
+      "WebSearch"
     ],
     "deny": [
       "Bash(gh repo create:*)"
@@ -280,7 +279,7 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "high"
     },
     "claude-haiku-5-5": {
       "effortLevel": "high"
