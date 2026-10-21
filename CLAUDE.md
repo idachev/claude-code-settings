@@ -8,8 +8,8 @@ Use POSIX syntax for `tail` and `head`: `tail -n 10`, not `tail -10`.
 
 ## Build Scripts — Always Log to File
 
-Never pipe a long build, test or compile command (`./build-dev.sh`, `./mvnw …`,
-`./gradlew …`, `npm run build`, `cargo build`, anything over a few seconds) straight into `tail`.
+Never pipe a long build, test or compile command (`./mvnw …`, `./gradlew …`,
+`npm run build`, `cargo build`, a repo build script, anything over a few seconds) straight into `tail`.
 Write the full output to a timestamped log under `./tmp/claude-logs/`, then read the file:
 
 ```bash
@@ -21,16 +21,6 @@ investigate earlier output with `Read` / `Grep` on the log instead of rerunning.
 log path to the user.
 
 **Why:** a failure above the tail window otherwise forces a full rebuild just to see the error.
-
-## Validate With The Repo's Full-Build Script Before Pushing
-
-Before a push or PR in a backend repo, run its full-build script from the repo root at least
-once, even if module-level `mvn` / `./gradlew` tests already passed: `./build-project.sh` for
-Spring Boot backends (e.g. `inventory-backend`), `./build-dev.sh` for Quarkus backends. Check
-for it at the start of a session in the repo, and log it as above.
-
-**Why:** a change can pass in one module and break a downstream one (e.g. flip an error code in
-`api-services`); the scripts also build the Docker images and catch packaging issues.
 
 ## Self-Review At The End Of Every Code Task
 
