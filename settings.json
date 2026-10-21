@@ -52,7 +52,9 @@
       "WebSearch",
       "Bash(command mvn:*)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(gh repo create:*)"
+    ],
     "ask": [],
     "defaultMode": "auto"
   },
