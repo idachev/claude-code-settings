@@ -7,7 +7,6 @@
     "allow": [
       "Bash(./build-dev.sh:*)",
       "Bash(./build-project.sh:*)",
-      "Bash(./mvnw:*)",
       "Bash(bd:*)",
       "Bash(cat:*)",
       "Bash(command cat:*)",
@@ -32,7 +31,6 @@
       "Bash(grep:*)",
       "Bash(jar tf:*)",
       "Bash(ls:*)",
-      "Bash(mvn test:*)",
       "Bash(rg:*)",
       "Bash(test:*)",
       "mcp__context7__resolve-library-id",
@@ -44,7 +42,6 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:java.testcontainers.org)",
       "WebFetch(domain:mapstruct.org)",
-      "WebFetch(domain:mvnrepository.com)",
       "WebFetch(domain:quarkus.io)",
       "WebFetch(domain:ritetag.com)",
       "WebFetch(domain:stackoverflow.com)",
