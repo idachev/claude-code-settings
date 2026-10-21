@@ -1,155 +1,134 @@
 ## System-Specific Commands
 
-### Bypassing Shell Aliases
-This system has aliases for standard bash commands. **ALWAYS** use the `command` builtin to bypass aliases and execute the actual system commands:
+This system aliases standard commands. **Always** call them through the `command`
+builtin: `command tail`, `command head`, `command rm`, `command cat`, `command grep`,
+`command ls`, `command cp`, `command mv`, `command find`, and any other standard command.
 
-```bash
-# Correct - bypasses aliases
-command tail -n 50 file.txt
-command head -n 100 file.txt
-command rm file.txt
-command cat file.txt
-command grep pattern file.txt
-
-# Wrong - may use aliased versions
-tail -n 50 file.txt
-rm file.txt
-```
-
-**Critical**: Apply this to ALL standard bash commands including but not limited to: `tail`, `head`, `rm`, `cat`, `grep`, `ls`, `cp`, `mv`, `find`
-
-### POSIX-Compliant Syntax
-Use POSIX-compliant syntax for `tail` and `head`:
-- Use `tail -n 10` (not `tail -10`)
-- Use `head -n 10` (not `head -10`)
+Use POSIX syntax for `tail` and `head`: `tail -n 10`, not `tail -10`.
 
 ## Build Scripts — Always Log to File
 
-**Never** run long build scripts (e.g. `./build-dev.sh`, `./mvnw …`, `./gradlew …`, `npm run build`, `cargo build`, anything that takes more than a few seconds) by piping straight into `command tail`. Always redirect full output to a **timestamped** log file under `./tmp/claude-logs/` first, then inspect the file.
+Never pipe a long build, test or compile command (`./build-dev.sh`, `./mvnw …`,
+`./gradlew …`, `npm run build`, `cargo build`, anything over a few seconds) straight into `tail`.
+Write the full output to a timestamped log under `./tmp/claude-logs/`, then read the file:
 
-**Why:** If the build output is only piped to `tail`, a failure buried above the tail window forces a rerun of the entire build to re-capture the error. Rebuilds can take many minutes. Writing to a file once lets you re-read any part of the output as many times as needed without rerunning.
+```bash
+mkdir -p ./tmp/claude-logs && LOG=./tmp/claude-logs/<name>-$(date +%Y%m%d-%H%M%S).log && <command> > "$LOG" 2>&1
+```
 
-**Why `./tmp/claude-logs/` + timestamps:** Keeps all Claude-generated script logs in one organized, gitignorable directory so they don't pollute the project's own `./tmp/` scratch area. Timestamped filenames mean consecutive runs never collide — you never have to `rm -f` a stale log or hit a `noclobber` error, and the chronological history of build attempts is preserved automatically.
+The timestamp is mandatory, so reruns never collide. Then `command tail -n 80 "$LOG"`;
+investigate earlier output with `Read` / `Grep` on the log instead of rerunning. Report the
+log path to the user.
 
-**How to apply** — every time you invoke a build/test/compile script:
-
-1. Ensure `./tmp/claude-logs/` exists: `mkdir -p ./tmp/claude-logs`.
-2. Run the script with full output captured to a **timestamped** file, e.g.:
-   ```bash
-   mkdir -p ./tmp/claude-logs && ./build-dev.sh > ./tmp/claude-logs/build-dev-$(date +%Y%m%d-%H%M%S).log 2>&1
-   ```
-   The `$(date +%Y%m%d-%H%M%S)` suffix is **mandatory**, not optional — it prevents overwrite-without-clobber errors on reruns and preserves run history.
-3. Capture the log path into a variable (or re-derive it) so subsequent `tail` / `Read` / `Grep` calls reference the exact file you just wrote.
-4. After the command finishes, `command tail -n 80 <logfile>` to see the summary.
-5. If anything looks wrong, use `Read` / `Grep` on the log file to investigate — **do not** rerun the build just to see earlier output.
-6. Report the log file path to the user so they can inspect it too.
-
-This applies to every project, not just one. Treat `./tmp/claude-logs/*.log` as the canonical record of Claude's build runs, sorted chronologically by filename.
+**Why:** a failure above the tail window otherwise forces a full rebuild just to see the error.
 
 ## Validate With The Repo's Full-Build Script Before Pushing
 
-Before pushing or opening a PR in a backend repo, check for a full-build script in the repo root and run it at least once, even if module-level `mvn`/`./gradlew` tests already passed:
+Before a push or PR in a backend repo, run its full-build script from the repo root at least
+once, even if module-level `mvn` / `./gradlew` tests already passed: `./build-project.sh` for
+Spring Boot backends (e.g. `inventory-backend`), `./build-dev.sh` for Quarkus backends. Check
+for it at the start of a session in the repo, and log it as above.
 
-- **Spring Boot backends**: `./build-project.sh` (e.g. `inventory-backend`)
-- **Quarkus backends**: `./build-dev.sh`
-
-**Why:** A change can pass in an isolated module's test run while breaking a downstream module — e.g. a validation check moved earlier in a call chain can preempt a more specific check elsewhere and flip its error code, only visible once the full reactor (or a downstream module like `api-services`) runs. These scripts also build the project's Docker image(s), catching packaging issues a plain test run wouldn't. Log to a timestamped file per the rule above; don't pipe straight to `tail`.
-
-**How to apply**: at the start of a session in a repo, check whether `build-project.sh` or `build-dev.sh` exists in the repo root. If one does, run it before any push/PR — not just the module(s) you touched.
+**Why:** a change can pass in one module and break a downstream one (e.g. flip an error code in
+`api-services`); the scripts also build the Docker images and catch packaging issues.
 
 ## Self-Review At The End Of Every Code Task
 
-When you finish any code task, run a self-review before reporting completion. Do not wait to be asked.
+**Златното правило — the first version of the code always misses something.** When a code
+task is done, review it before you report it as ready and before you ask "shall I proceed?".
+Do not wait to be asked. Read the whole diff back as if someone else wrote it. A green test suite is not a substitute: the tests only cover the cases
+you already thought of.
 
-**Златното правило — the first version of the code always misses something.** The review is
-mandatory the moment a first implementation is finished, and it happens **before** you report
-the work as ready and **before** you ask "shall I proceed?". A green test suite is not a
-substitute: the tests only cover the cases you already thought of. Read the whole diff back as
-if someone else wrote it, hunt for what the tests do not cover, then follow the order below.
+Follow the `self-review` skill: collect findings, **revalidate each one against the actual
+source before touching anything**, fix only the confirmed ones, and report every finding with
+its outcome, fixed or rejected.
 
-**Order matters — revalidate before you fix:**
-
-1. Review the code you just wrote or changed and collect findings.
-2. Take each finding one at a time and **revalidate it against the actual source** before touching anything.
-3. If the finding is confirmed, fix it.
-4. If the finding does not hold up, **do not fix it**. Report that you checked it and it was not a real problem, then move to the next finding.
-
-**Why:** review passes — especially ones run by subagents — produce plausible-sounding findings that are wrong. Fixing an unconfirmed finding changes working code for no reason and can introduce real bugs. A finding earns a fix only after it survives a second look at the source.
-
-Report the outcome of every finding, both the ones you fixed and the ones you rejected, so the review's actual coverage is visible and not just the diff.
+**Why:** review passes, especially by subagents, produce plausible findings that are wrong;
+fixing an unconfirmed one changes working code for no reason.
 
 ## Do Not Create GitHub Repos Without Explicit Permission
 
-Do not run `gh repo create` (or any `gh` command that creates a
-repository) unless the user explicitly asked to create a GitHub repo.
+Do not run `gh repo create` (or any `gh` command that creates a repository) unless the user
+explicitly asked to create a GitHub repo. "commit and push" is not permission. If `origin` is
+missing, commit locally, say there is no remote, and wait.
 
-"commit and push" is not permission to create a repo. If `origin` is
-missing, commit locally and stop. Say there is no remote. Wait.
-
-Do not pick a GitHub account from the current `gh auth` default. Personal
-repos go to `idachev` (`git@github-idachev:idachev/...`), not
-`ivan-mentorano`, unless the user named that org.
-
+Do not pick a GitHub account from the current `gh auth` default. Personal repos go to
+`idachev` (`git@github-idachev:idachev/...`), not `ivan-mentorano`, unless the user named
+that org.
 
 ## Plans And Specs Live In `docs/plans/`, Finished Ones In `docs/plans/done/`
 
-Superpowers brainstorming specs and writing-plans plans go to `docs/plans/`
-in the repo, not to `docs/superpowers/specs/` or `docs/superpowers/plans/`.
-This overrides the default paths in the superpowers skills. Keep the skills'
-file naming: `YYYY-MM-DD-<topic>-design.md` for a spec,
+Superpowers brainstorming specs and writing-plans plans go to `docs/plans/` in the repo, not
+to `docs/superpowers/specs/` or `docs/superpowers/plans/`. This overrides the skills' default
+paths. Keep their file naming: `YYYY-MM-DD-<topic>-design.md` for a spec,
 `YYYY-MM-DD-<feature>.md` for a plan.
 
-When a plan is implemented and merged, move its plan and spec to
-`docs/plans/done/` with `git mv`, and fix any relative links between them.
-`docs/plans/` then holds only work that is still open, so a glance at the
-directory shows what is in flight.
-
-Do not move a plan to `done/` on your own judgment. Ivan says when it is
-done, or the plan's own steps are all verified complete.
+When a plan is implemented and merged, `git mv` its plan and spec to `docs/plans/done/` and
+fix the relative links between them. Do not do it on your own judgment: only when Ivan says it
+is done, or all the plan's steps are verified complete.
 
 ## Serena Is The Default Lens On Code
 
-When a task touches **code**, use the `serena` MCP tools as the primary way to
-read it, search it, and change it. Text tools are the fallback, not the default.
+When a task touches **code**, use the `serena` MCP tools as the primary way to read, search and
+change it: `get_symbols_overview` before reading a file whole, `find_symbol` /
+`find_referencing_symbols` / `find_implementations` instead of `grep` for definitions,
+callers and implementations, `rename_symbol`,
+`replace_symbol_body`, `insert_after_symbol`, `safe_delete_symbol` instead of `sed` or
+line-number edits, `get_diagnostics_for_file` after an edit.
 
-Serena reads through a language server, so it works on the same symbol tree the
-compiler sees. `grep`, `rg` and `sed` only see lines of characters. That gap
-matters for reading, for searching, and for editing alike.
+Keep `grep` / `rg` / `sed` for what genuinely is text: docs and markdown, config values, logs,
+`.env` templates, commit messages, shell scripts.
 
-**Reach for serena whenever you would otherwise reach for a text tool on code:**
+**Why:** text search misses references that arrive through aliases, re-exports or inheritance,
+and gives false hits in comments and strings; serena answers from the symbol graph.
 
-- Understanding an unfamiliar file → `get_symbols_overview` before reading it
-  whole; then `find_symbol` with `include_body` for just the part you need.
-  This is usually cheaper and more accurate than dumping the file.
-- "Who calls this?" / "is this still used?" → `find_referencing_symbols`. This is
-  the case text search gets wrong most often, in both directions.
-- Where is this defined? → `find_symbol`, `find_declaration`.
-- What implements this interface or base class? → `find_implementations`.
-- Renaming across the project → `rename_symbol`, not a `sed` sweep.
-- Replacing a function or method body → `replace_symbol_body`.
-- Adding code next to an existing symbol → `insert_before_symbol` /
-  `insert_after_symbol`, instead of counting line numbers.
-- Removing something → `safe_delete_symbol`, which refuses when references
-  remain and tells you what they are.
-- Project-wide textual edits that still need to be precise → `replace_content` /
-  `replace_in_files`.
-- Checking a file compiles clean after an edit → `get_diagnostics_for_file`.
+If the serena tools are deferred, load the ones you need with **one** batched `ToolSearch`
+call before starting the code work.
 
-**Keep `grep` / `rg` / `sed` for what genuinely is text** and has no symbol
-nature: prose in docs and markdown, values and keys in config files, log file
-contents, `.env` templates, commit messages, shell scripts.
+## Number Every Item In Every List
 
-**Why.** Text search finds lines, not meanings. It produces false hits — the
-word inside a comment, a string literal, or a longer unrelated identifier — and
-at the same time it misses real ones, because a reference can arrive through an
-import alias, a re-export from another module, a decorator, or inheritance. Both
-errors are expensive in opposite ways: a missed reference leads to deleting or
-renaming something that is still in use, while a false hit leaves dead code
-alive and wastes a review. Text editing has the mirror problem: a `sed` rename
-touches the string wherever it appears, including places that merely contain it.
-Serena answers from the symbol graph, so it is both complete and free of that
-noise, and its edits land on the symbol rather than on the characters.
+Every user-facing item gets a topic ID: two Cyrillic letters plus a number, so Ivan can answer
+"ВР1" instead of quoting the text back. This covers list items (the **Списък** section too),
+questions, answer options, status lines, open points, and entries written into a project TODO
+file.
 
-If the serena tools are deferred in a session, load the ones you expect to need
-with **one** batched `ToolSearch` call before starting the code work — not one
-call per tool.
+- Choose the letters by the item's topic: `ВР1` for time, `ГР2` for scope boundaries, `ОП1`
+  for answer options.
+- Items of one topic share the letters and count up (`ВР1`, `ВР2` …), so no two items share an
+  ID.
+- Keep an item's ID when it comes back later in the same reply, and in a follow-up reply that
+  returns to the same item. Reuse the ID already in a TODO file.
+- Review findings may stay `F1`, `F2` ….
+- Plain numbers and unlabelled bullets ("- Отворено: …") are not enough.
+
+**Why:** without IDs Ivan has to copy an item's text to point at it; plain numbers clashed with
+the TODO file's own numbering, and Latin one-letter prefixes carry no topic.
+
+## One-By-One Passes Close Every Decision
+
+When Ivan asks to go through findings one by one and to ask him about anything that changes
+behaviour, the goal is to close every decision. If fixing a finding brings up a new choice (a
+new name in the ubiquitous language, a missing button, an unknown fact), ask it right there as
+the next one-by-one question. Do not collect such points into an "open points" list in the
+final report. Only a question Ivan cannot answer or explicitly defers stays in the report,
+marked as deferred; never invent the answer.
+
+## Codex Facts
+
+- Model id `gpt-6-astra`. "astra" is what people say, but `--model astra` fails with HTTP 400;
+  always pass the full id.
+- Effort: pass it explicitly (the config default is `high`). `medium` by default; `high` only
+  for review of very complex specs or implementations, critical actions, or complex consensus.
+- Direct CLI (the shell aliases `codex`):
+  `command timeout 1200 codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`,
+  log in `./tmp/claude-logs/` with a timestamp; tell it not to browse the web.
+
+## Commands For Ivan To Run Go In Their Own Code Block
+
+When Ivan has to run a command, put it alone in a fenced code block, one command per block
+(with the `! ` prefix when it is meant for this session's prompt). Never put it inline in a
+sentence or list item, and never put punctuation or prose on the same line. Prose before the
+block says what it does; the next step goes after the block.
+
+**Why:** Ivan copied `... -f ack_deploy_changes=true. deploy/classify.sh` from an inline list
+item; the trailing full stop came along and GitHub refused the dispatch with HTTP 422.
