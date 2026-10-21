@@ -224,3 +224,17 @@ msg-notify skill. Quiet hours, the method and the captain window belong to
 - Effort: `medium` by default; `high` only for review of very complex specs or implementations, assessment of critical actions, or complex consensus. The config default in `~/.codex/config.toml` is `high`, so pass effort explicitly.
 - Direct CLI (the shell aliases `codex`): `command timeout 1200 codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`, log in `./tmp/claude-logs/` with a timestamp; tell it not to browse the web.
 - For coordinated multi-agent work use the `captain` skill (`/captain`); it holds the review loop, fallbacks and consensus rules.
+
+## Commands For Ivan To Run Go In Their Own Code Block
+
+When Ivan has to run a command themselves, put it alone in a fenced code block on its own lines,
+one command per block. Never put it inline inside a sentence or a list item, and never put
+punctuation (a full stop, comma, bracket) or prose on the same line as the command.
+
+**Why:** Ivan copied `... -f ack_deploy_changes=true. deploy/classify.sh` from an inline list
+item; the trailing full stop and the next words came along, and GitHub refused the dispatch
+with HTTP 422 (`'true.'` not an allowed value).
+
+**How to apply:** prose before the block says what the command does; the block holds only the
+command (with the `! ` prefix when it is meant for this session's prompt); the next step goes
+after the block.
