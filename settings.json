@@ -99,6 +99,16 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/scripts/guard-kill.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "",
         "hooks": [
           {
@@ -117,16 +127,6 @@
             "timeout": 2
           }
         ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/scripts/guard-kill.py",
-            "timeout": 5
-          }
-        ]
       }
     ],
     "SessionEnd": [
@@ -135,7 +135,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=${PPID:-}; set -f; set -- $(ps -o tty= -p \"$__ppid\" 2>/dev/null); __tty=${1:-}; set +f; case \"$__ppid\" in 0|1) __ppid=\"\";; esac; case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;end=claude;event=session_end%s\\033\\\\' \"$__sp\" > \"$__tty\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=${PPID:-}; set -f; set -- $(ps -o tty= -p \"$__ppid\" 2>/dev/null); __tty=${1:-}; set +f; case \"$__ppid\" in 0|1) __ppid=\"\";; esac; case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; IFS= read -r __in || true; case \"$__in\" in *\"}\") ;; *) __in=$__in$(cat) ;; esac; __sid=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"session_id,sessionId,conversationId\" -v budget=64 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __rs=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"reason\" -v budget=32 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); case \"$__sid\" in *[!0-9A-Fa-f-]*) __sid=\"\";; esac; case \"$__rs\" in *[!a-z_]*) __rs=\"\";; esac; __ss=\"\"; [ -n \"$__sid\" ] && __ss=\";session=$__sid\"; [ -n \"$__rs\" ] && __ss=\"$__ss;reason=$__rs\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;end=claude;event=session_end%s%s\\033\\\\' \"$__sp\" \"$__ss\" > \"$__tty\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
             "timeout": 2
           }
         ]
@@ -146,7 +146,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=${PPID:-}; set -f; set -- $(ps -o tty= -p \"$__ppid\" 2>/dev/null); __tty=${1:-}; set +f; case \"$__ppid\" in 0|1) __ppid=\"\";; esac; case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=session_start%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=${PPID:-}; set -f; set -- $(ps -o tty= -p \"$__ppid\" 2>/dev/null); __tty=${1:-}; set +f; case \"$__ppid\" in 0|1) __ppid=\"\";; esac; case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; IFS= read -r __in || true; case \"$__in\" in *\"}\") ;; *) __in=$__in$(cat) ;; esac; __sid=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"session_id,sessionId,conversationId\" -v budget=64 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __rs=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"reason\" -v budget=32 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); case \"$__sid\" in *[!0-9A-Fa-f-]*) __sid=\"\";; esac; case \"$__rs\" in *[!a-z_]*) __rs=\"\";; esac; __ss=\"\"; [ -n \"$__sid\" ] && __ss=\";session=$__sid\"; [ -n \"$__rs\" ] && __ss=\"$__ss;reason=$__rs\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=session_start%s%s\\033\\\\' \"$__sp\" \"$__ss\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
             "timeout": 2
           }
         ]
@@ -192,12 +192,15 @@
     "command": "~/bin/claude-statusline.sh"
   },
   "enabledPlugins": {
+    "3amigos@ai-marketplace": true,
     "atlassian-tools@sc-marketplace": false,
     "branch-board@ai-marketplace": false,
     "captain@ai-marketplace": true,
+    "cc-plugin-you-should-know@builtin": true,
+    "cc-safety-net@ai-marketplace": true,
     "claude-md-management@claude-plugins-official": false,
     "clean-code@ai-marketplace": true,
-    "cloudflare@cloudflare": false,
+    "cloudflare@cloudflare": true,
     "code-review@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": false,
     "codex@openai-codex": true,
@@ -210,6 +213,7 @@
     "ms-amplifier@sc-marketplace": false,
     "pdf2epub@pdf2epub-skills": false,
     "playwright@claude-plugins-official": true,
+    "project-memory@ai-marketplace": true,
     "sc-sdlc@sc-marketplace": false,
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
@@ -217,10 +221,8 @@
     "ui-ux-pro-max@ui-ux-pro-max-skill": false,
     "utils@ai-marketplace": true,
     "xmind-builder@xmind-skills": false,
-    "3amigos@ai-marketplace": true,
-    "cc-plugin-you-should-know@builtin": true,
-    "project-memory@ai-marketplace": true,
-    "cc-safety-net@ai-marketplace": true
+    "narrated-video@ai-marketplace": true,
+    "bg-stress@ai-marketplace": true
   },
   "extraKnownMarketplaces": {
     "ai-marketplace": {
@@ -272,17 +274,20 @@
     "claude-fable-5-1": {
       "effortLevel": "high"
     },
+    "claude-haiku-5-5": {
+      "effortLevel": "high"
+    },
     "claude-opus-5": {
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "medium"
     },
-    "claude-haiku-5-5": {
-      "effortLevel": "high"
+    "claude-sonnet-5-5": {
+      "effortLevel": "medium"
     }
   },
-  "advisorModel": "opus",
+  "advisorModel": "fable",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {

@@ -113,14 +113,22 @@ it as is. Details are in the `msg-notify` skill.
 
 ## Codex Facts
 
-- Model id `gpt-6-astra`. "astra" is what people say, but `--model astra` fails with HTTP 400;
-  always pass the full id.
-- Effort: pass it explicitly (the config default is `high`). `medium` by default; `high` only
-  for review of very complex specs or implementations, critical actions, or complex consensus.
+- Model id `gpt-6.1-terra` (Ivan, 2026-10-30: faster reviews than `gpt-6-astra`). "terra" is
+  what people say, but a short name fails with HTTP 400; always pass the full id (the list is in
+  `~/.codex/models_cache.json`).
+- Effort: pass it explicitly. `high` for reviews; `medium` for quick consults and votes.
 - Direct CLI (the shell aliases `codex`):
-  `command timeout 1200 codex exec -m gpt-6-astra -c model_reasoning_effort=medium -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`,
+  `command timeout 1200 codex exec -m gpt-6.1-terra -c model_reasoning_effort=high -s read-only -C <repo> -o <log>.final.md - < prompt.md > <log> 2>&1`,
   log in `./tmp/claude-logs/` with a timestamp; tell it not to browse the web.
 - For coordinated multi-agent work use the `captain` skill.
+
+## Session Names Start With `idachev-`
+
+Every Claude Code session name I give or propose starts with `idachev-`: `claude -n`,
+`/rename`, a handoff successor (`idachev-<repo>-<topic>-r<N>`), a background or remote
+session. A name that already starts with `idachev-` keeps one prefix, not two.
+
+**Why:** Ivan asked for it on 2026-10-29, so his sessions are easy to find in shared lists.
 
 ## Commands For Ivan To Run Go In Their Own Code Block
 
@@ -131,3 +139,7 @@ block says what it does; the next step goes after the block.
 
 **Why:** Ivan copied `... -f ack_deploy_changes=true. deploy/classify.sh` from an inline list
 item; the trailing full stop came along and GitHub refused the dispatch with HTTP 422.
+
+# graphify
+- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
+When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
