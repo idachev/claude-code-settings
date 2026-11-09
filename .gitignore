@@ -108,3 +108,13 @@ captain/
 
 # Claude build/push logs
 tmp/
+
+# Signature, stamp and sync-time files Claude Code writes next to its policy caches
+policy-limits.json.*
+remote-settings.json.*
+
+# Synced skills Claude Code moved aside; deleted after cleanupPeriodDays
+skills/.trash/
+
+# One-off kickoff prompts already consumed or replaced
+kickoffs/kickoff-used/
