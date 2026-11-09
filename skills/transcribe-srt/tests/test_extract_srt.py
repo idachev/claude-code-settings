@@ -224,5 +224,14 @@ class FailedRealignTest(unittest.TestCase):
         self.assertIn("1/4, 3/4", stderr.getvalue())
 
 
+class WhisperKeyTest(unittest.TestCase):
+    def test_the_key_goes_through_stdin_and_not_argv(self):
+        done = mock.Mock(returncode=0, stdout="1\n\n__HTTP_STATUS__200", stderr="")
+        with mock.patch.object(srt.subprocess, "run", return_value=done) as run:
+            srt.openai_whisper_srt_one(Path("a.mp3"), "secret-key", "bg")
+        self.assertNotIn("secret-key", " ".join(run.call_args.args[0]))
+        self.assertEqual(run.call_args.kwargs["input"], "Authorization: Bearer secret-key\n")
+
+
 if __name__ == "__main__":
     unittest.main()
