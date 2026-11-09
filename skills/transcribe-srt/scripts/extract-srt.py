@@ -627,12 +627,14 @@ def openai_whisper_srt_one(
                 "--max-time", "300",
                 "--write-out", "\n__HTTP_STATUS__%{http_code}",
                 "-X", "POST", OPENAI_TRANSCRIBE_URL,
-                "-H", f"Authorization: Bearer {api_key}",
+                # The key goes through stdin: argv is readable by other processes.
+                "-H", "@-",
                 "-F", f"file=@{audio}",
                 "-F", f"model={OPENAI_WHISPER_MODEL}",
                 "-F", f"language={language}",
                 "-F", "response_format=srt",
             ],
+            input=f"Authorization: Bearer {api_key}\n",
             capture_output=True, text=True,
         )
         if result.returncode != 0:
