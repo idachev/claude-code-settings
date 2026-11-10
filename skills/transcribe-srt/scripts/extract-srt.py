@@ -744,6 +744,52 @@ def validate_srt(srt_text: str) -> tuple[bool, str]:
     return True, "ok"
 
 
+def drop_empty_srt_blocks(srt_text: str) -> tuple[str, list[int]]:
+    """Drop blocks that carry a number and a timestamp but no text.
+
+    Gemini leaves the text empty for a Whisper segment that has no speech
+    behind it (Whisper hallucinates short lines on silence). Such a block is
+    correct, not broken, so it is removed instead of failing validation.
+    Returns (srt_without_empty_blocks, 0-based positions of dropped blocks).
+    """
+    kept: list[str] = []
+    dropped: list[int] = []
+    for pos, block in enumerate(re.split(r"\n\s*\n", srt_text.strip())):
+        lines = [ln for ln in block.strip().split("\n") if ln.strip()]
+        if (len(lines) == 2 and lines[0].strip().isdigit()
+                and SRT_TIMESTAMP_RE.search(lines[1])):
+            dropped.append(pos)
+            continue
+        kept.append(block.strip())
+    return "\n\n".join(kept), dropped
+
+
+def remove_srt_blocks_at(srt_text: str, positions: list[int]) -> str:
+    """Remove the blocks at the given 0-based positions."""
+    drop = set(positions)
+    blocks = re.split(r"\n\s*\n", srt_text.strip())
+    return "\n\n".join(b.strip() for pos, b in enumerate(blocks) if pos not in drop)
+
+
+# A chunk whose mean loudness is below this is silence (a waiting room before
+# the session starts, a muted break). Whisper and Gemini both invent speech on
+# silence, so such a chunk gets no subtitles at all.
+SILENT_CHUNK_MEAN_DB = -60.0
+
+
+def chunk_mean_volume_db(audio: Path) -> float | None:
+    """Mean loudness of an audio file in dB from ffmpeg volumedetect, or None."""
+    proc = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-nostats", "-i", str(audio),
+         "-af", "volumedetect", "-f", "null", "-"],
+        capture_output=True, text=True,
+    )
+    m = re.search(r"mean_volume:\s*(-?[\d.]+|-inf) dB", proc.stderr)
+    if not m:
+        return None
+    return float("-inf") if m.group(1) == "-inf" else float(m.group(1))
+
+
 def _srt_blocks(srt_text: str) -> list[tuple[str, str, list[str]]]:
     """Parse SRT into [(segment_number, timestamp_line, text_lines), ...]."""
     out: list[tuple[str, str, list[str]]] = []
@@ -979,6 +1025,12 @@ def main() -> None:
         transcribe_path = cache_dir / f"gemini-transcribe-{i:03d}.txt"
         realign_path = cache_dir / f"gemini-realign-{i:03d}.srt"
 
+        # (0) Silent chunk: no subtitles, no Gemini calls.
+        mean_db = chunk_mean_volume_db(chunk_path)
+        if mean_db is not None and mean_db < SILENT_CHUNK_MEAN_DB:
+            print(f"=== {tag}: silent (mean {mean_db:.1f} dB), no subtitles ===", flush=True)
+            return i, ""
+
         # (a) Transcribe step.
         t_side = read_sidecar(transcribe_path)
         accurate = ""
@@ -1063,15 +1115,29 @@ def main() -> None:
                 print(f"  {tag}: realign {truncated}", flush=True)
                 candidate = ""
             candidate = strip_code_fence(candidate)
+            blocks_before_drop = len(re.split(r"\n\s*\n", candidate.strip())) if candidate.strip() else 0
+            candidate, empty_positions = drop_empty_srt_blocks(candidate)
+            raw_for_ts = per_chunk_raw[i]
+            expected_n = raw_n
+            if empty_positions:
+                print(f"  {tag}: dropped {len(empty_positions)} segment(s) with no speech",
+                      flush=True)
+                # Positions map 1:1 onto raw only when Gemini kept every segment;
+                # otherwise the counts differ and the transplant is skipped anyway.
+                # The emptied segments are Whisper hallucinations on silence
+                # ("Благодаря ви, че гледахте"), so they don't count as lost.
+                if blocks_before_drop == raw_n:
+                    raw_for_ts = remove_srt_blocks_at(per_chunk_raw[i], empty_positions)
+                    expected_n = raw_n - len(empty_positions)
             ok, reason = validate_srt(candidate)
             cand_n = count_srt_segments(candidate)
             if not ok:
                 last_failure = f"validation: {reason}"
-            elif cand_n < int(raw_n * 0.7):
-                last_failure = f"only {cand_n}/{raw_n} segments emitted"
+            elif cand_n < int(expected_n * 0.7):
+                last_failure = f"only {cand_n}/{expected_n} segments emitted"
             else:
                 realigned, new_n = candidate, cand_n
-                patched, ts_changed = transplant_timestamps(per_chunk_raw[i], candidate)
+                patched, ts_changed = transplant_timestamps(raw_for_ts, candidate)
                 if patched is not None and ts_changed:
                     print(f"  WARN: {tag} Gemini fabricated timestamps; "
                           "restored from raw Whisper SRT.", flush=True)
@@ -1094,8 +1160,8 @@ def main() -> None:
             "transcribe_sha256": transcribe_sha,
             "model": args.gemini_model,
         })
-        if new_n != raw_n:
-            print(f"  WARN: {tag} segment count changed ({raw_n} → {new_n}) — "
+        if new_n != expected_n:
+            print(f"  WARN: {tag} segment count changed ({expected_n} → {new_n}) — "
                   "Gemini merged/split segments.", flush=True)
         print(f"  {tag}: {new_n} segments", flush=True)
         return i, realigned

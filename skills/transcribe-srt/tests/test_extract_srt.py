@@ -233,5 +233,64 @@ class WhisperKeyTest(unittest.TestCase):
         self.assertEqual(run.call_args.kwargs["input"], "Authorization: Bearer secret-key\n")
 
 
+RAW_WITH_SILENCE = """1
+00:00:00,000 --> 00:00:02,000
+Съжалявам, че съжалявам.
+
+2
+00:00:31,000 --> 00:00:33,000
+Здравей, здравей, Марина.
+
+3
+00:02:08,000 --> 00:02:10,000
+Благодаря ви, че гледахте това."""
+
+REALIGNED_WITH_EMPTY = """1
+00:00:00,000 --> 00:00:02,000
+
+2
+00:00:31,000 --> 00:00:33,000
+Здравей, здрасти, Марина.
+
+3
+00:02:08,000 --> 00:02:10,000"""
+
+
+class EmptyBlockTest(unittest.TestCase):
+    def test_empty_blocks_are_dropped_and_reported_by_position(self):
+        text, dropped = srt.drop_empty_srt_blocks(REALIGNED_WITH_EMPTY)
+        self.assertEqual(dropped, [0, 2])
+        self.assertEqual(srt.validate_srt(text), (True, "ok"))
+        self.assertEqual(srt.count_srt_segments(text), 1)
+        self.assertIn("Здравей, здрасти, Марина.", text)
+
+    def test_raw_blocks_at_the_same_positions_are_removed_for_the_transplant(self):
+        _, dropped = srt.drop_empty_srt_blocks(REALIGNED_WITH_EMPTY)
+        raw = srt.remove_srt_blocks_at(RAW_WITH_SILENCE, dropped)
+        self.assertEqual(srt.count_srt_segments(raw), 1)
+        self.assertIn("Здравей, здравей, Марина.", raw)
+
+    def test_text_without_empty_blocks_is_unchanged(self):
+        text, dropped = srt.drop_empty_srt_blocks(RAW_WITH_SILENCE)
+        self.assertEqual(dropped, [])
+        self.assertEqual(text, RAW_WITH_SILENCE)
+
+
+class SilentChunkTest(unittest.TestCase):
+    def _volume(self, stderr):
+        done = mock.Mock(returncode=0, stdout="", stderr=stderr)
+        with mock.patch.object(srt.subprocess, "run", return_value=done):
+            return srt.chunk_mean_volume_db(Path("chunk.mp3"))
+
+    def test_mean_volume_is_parsed_from_ffmpeg(self):
+        self.assertEqual(self._volume("[Parsed_volumedetect_0] mean_volume: -77.5 dB\n"), -77.5)
+
+    def test_minus_infinity_counts_as_silent(self):
+        self.assertLess(self._volume("mean_volume: -inf dB\n"), srt.SILENT_CHUNK_MEAN_DB)
+
+    def test_missing_volume_line_gives_none(self):
+        self.assertIsNone(self._volume("no audio stream\n"))
+
+
 if __name__ == "__main__":
     unittest.main()
