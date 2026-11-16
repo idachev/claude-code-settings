@@ -58,6 +58,11 @@ When a plan is implemented and merged, `git mv` its plan and spec to `docs/plans
 fix the relative links between them. Do not do it on your own judgment: only when Ivan says it
 is done, or all the plan's steps are verified complete.
 
+## Artifacts Get A Copy In Git
+
+Before you publish or republish a claude.ai artifact, read `~/.claude/docs/artifacts-copy-in-git.md`
+and follow it. Do not read it for other work.
+
 ## Serena Is The Default Lens On Code
 
 When a task touches **code**, use the `serena` MCP tools as the primary way to read, search and
