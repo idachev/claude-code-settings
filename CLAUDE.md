@@ -144,7 +144,3 @@ block says what it does; the next step goes after the block.
 
 **Why:** Ivan copied `... -f ack_deploy_changes=true. deploy/classify.sh` from an inline list
 item; the trailing full stop came along and GitHub refused the dispatch with HTTP 422.
-
-# graphify
-- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
