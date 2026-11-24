@@ -22,16 +22,20 @@ log path to the user.
 
 **Why:** a failure above the tail window otherwise forces a full rebuild just to see the error.
 
-## Self-Review At The End Of Every Code Task
+## Self-Review Of Every Output, Code First
 
 **Златното правило — the first version of the code always misses something.** When a code
 task is done, review it before you report it as ready and before you ask "shall I proceed?".
 Do not wait to be asked. Read the whole diff back as if someone else wrote it. A green test suite is not a substitute: the tests only cover the cases
 you already thought of.
 
-Follow the `self-review` skill: collect findings, **revalidate each one against the actual
-source before touching anything**, fix only the confirmed ones, and report every finding with
-its outcome, fixed or rejected.
+Follow the `utils:self-review` skill (utils plugin of the ai-marketplace): collect findings,
+**revalidate each one against the actual source before touching anything**, fix only the
+confirmed ones, and report every finding with its outcome, fixed or rejected. The same holds
+for every other output, right after it is written and in the same context: a plan, a spec, a
+handoff or handover prompt, a prompt file for an agent, a document. Run the repo's build and
+tests as their own step; the skill runs none. A review by a fresh agent, where the task has
+one, still follows.
 
 **Why:** review passes, especially by subagents, produce plausible findings that are wrong;
 fixing an unconfirmed one changes working code for no reason.
