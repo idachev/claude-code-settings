@@ -168,6 +168,22 @@ class SafetySettingsTest(unittest.TestCase):
         self.assertEqual({s["threshold"] for s in settings}, {"BLOCK_NONE"})
 
 
+class ZeroThinkingBudgetTest(unittest.TestCase):
+    def test_older_flash_accepts_a_zero_budget(self):
+        self.assertTrue(srt.accepts_zero_thinking_budget("gemini-2.5-flash"))
+
+    def test_flash_from_3_5_on_rejects_it(self):
+        for model in ("gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"):
+            self.assertFalse(srt.accepts_zero_thinking_budget(model), model)
+
+    def test_flash_without_a_version_gets_no_zero_budget(self):
+        self.assertFalse(srt.accepts_zero_thinking_budget("gemini-flash-latest"))
+
+    def test_pro_and_argon_reject_it(self):
+        for model in ("gemini-3.1-pro-preview", "gemini-4-argon"):
+            self.assertFalse(srt.accepts_zero_thinking_budget(model), model)
+
+
 def gemini_response(text, finish_reason="STOP"):
     return {"candidates": [{"finishReason": finish_reason, "content": {"parts": [{"text": text}]}}]}
 

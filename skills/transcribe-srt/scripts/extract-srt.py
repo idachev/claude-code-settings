@@ -331,13 +331,31 @@ def gemini_safety_settings(auth: GeminiAuth) -> list[dict[str, str]]:
 GEMINI_RETRY_REASONS = {"RECITATION", "SAFETY", "OTHER", "BLOCKLIST", "PROHIBITED_CONTENT"}
 
 
+_GEMINI_VERSION_RE = re.compile(r"gemini-(\d+)\.(\d+)")
+
+
+def accepts_zero_thinking_budget(model: str) -> bool:
+    """True only for flash models older than 3.5, which accept thinkingBudget=0.
+
+    Pro variants reject thinkingBudget=0 with HTTP 400 — they only operate in
+    thinking mode. Flash from 3.5 on (3.5-flash, 3.8-flash) rejects it too:
+    thinking cannot be turned off there, so the request goes without
+    thinkingConfig and the model runs at its default level (MEDIUM).
+    """
+    if "flash" not in model:
+        return False
+    m = _GEMINI_VERSION_RE.search(model)
+    # Unknown version (e.g. an alias): send no thinkingConfig, since a 400 is worse
+    # than spending a few thinking tokens.
+    return m is not None and (int(m.group(1)), int(m.group(2))) < (3, 5)
+
+
 def _gemini_request(parts: list, auth: GeminiAuth, model: str, disable_thinking: bool) -> dict:
     generation_config: dict = {"temperature": 0.2, "maxOutputTokens": 65536}
-    # Pro variants reject thinkingBudget=0 with HTTP 400 — they only operate in
-    # thinking mode. The budget-tuning trick only applies to flash variants,
-    # where thinking tokens count against the output budget; disable for
-    # mechanical tasks (realignment) so the budget goes to output.
-    if disable_thinking and "flash" in model:
+    # The budget-tuning trick only applies to older flash variants, where
+    # thinking tokens count against the output budget; disable for mechanical
+    # tasks (realignment) so the budget goes to output.
+    if disable_thinking and accepts_zero_thinking_budget(model):
         generation_config["thinkingConfig"] = {"thinkingBudget": 0}
     # Mechanical transcription/realignment shouldn't trip safety filters, but
     # in practice the default Gemini thresholds occasionally PROHIBITED_CONTENT
